@@ -11,7 +11,6 @@ export default function App() {
   return (
     <div className="min-h-screen bg-[#060708] text-slate-100">
       <Navbar />
-
       <main>
         <HeroSection />
         <SkillsSection />
@@ -20,7 +19,6 @@ export default function App() {
         <ProjectsSection />
         <ContactSection />
       </main>
-
       <Footer />
     </div>
   );

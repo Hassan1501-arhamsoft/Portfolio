@@ -3,7 +3,9 @@ import {
   ChevronLeft,
   ChevronRight,
   ExternalLink,
+  ImageOff,
   Layers,
+  Maximize2,
   Network,
   Sparkles,
   X,
@@ -234,7 +236,7 @@ export function ProjectCard({
 }
 
 /**
- * Expanded Project Architecture + Interactive Tech-Stack Spider-Nest Modal
+ * Expanded Project Architecture + Image Preview + Interactive Tech-Stack Spider-Nest Modal
  */
 export function ProjectSpiderNestModal({
   projects = [],
@@ -243,8 +245,13 @@ export function ProjectSpiderNestModal({
   onSelectIndex,
 }) {
   const [hoverState, setHoverState] = useState({ forIndex: null, node: null });
+  const [failedImageIndex, setFailedImageIndex] = useState(null);
+  const [zoomedIndex, setZoomedIndex] = useState(null);
+
   const hoveredNode =
     hoverState.forIndex === activeIndex ? hoverState.node : null;
+  const hasImageError = failedImageIndex === activeIndex;
+  const isImageZoomed = zoomedIndex === activeIndex;
 
   const project =
     typeof activeIndex === 'number' ? projects[activeIndex] : null;
@@ -256,11 +263,18 @@ export function ProjectSpiderNestModal({
     document.body.style.overflow = 'hidden';
 
     const handleKeyDown = (e) => {
-      if (e.key === 'Escape') onClose?.();
-      if (e.key === 'ArrowRight' && projects.length > 1) {
+      if (e.key === 'Escape') {
+        if (isImageZoomed) {
+          setZoomedIndex(null);
+        } else {
+          onClose?.();
+        }
+        return;
+      }
+      if (!isImageZoomed && e.key === 'ArrowRight' && projects.length > 1) {
         onSelectIndex?.((activeIndex + 1) % projects.length);
       }
-      if (e.key === 'ArrowLeft' && projects.length > 1) {
+      if (!isImageZoomed && e.key === 'ArrowLeft' && projects.length > 1) {
         onSelectIndex?.((activeIndex - 1 + projects.length) % projects.length);
       }
     };
@@ -270,7 +284,14 @@ export function ProjectSpiderNestModal({
       document.body.style.overflow = prevOverflow;
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [project, activeIndex, projects.length, onClose, onSelectIndex]);
+  }, [
+    project,
+    activeIndex,
+    projects.length,
+    isImageZoomed,
+    onClose,
+    onSelectIndex,
+  ]);
 
   const webNodes = useMemo(
     () => buildProjectWebNodes(project?.stack || []),
@@ -398,40 +419,87 @@ export function ProjectSpiderNestModal({
           </div>
         </div>
 
-        {/* Two-Column Body: Readable Architecture Specs + Interactive Stack Spider-Web */}
+        {/* Two-Column Body: Visual Preview + Architecture Specs + Interactive Stack Spider-Web */}
         <div className="grid lg:grid-cols-12 gap-6 p-5 sm:p-6">
-          {/* Left Column: Summary & System Architecture */}
-          <div className="lg:col-span-6 flex flex-col justify-between space-y-5">
-            <div>
-              <p className="text-sm leading-relaxed text-zinc-300">
-                {project.summary}
-              </p>
+          {/* Left Column: Project Image Preview, Summary & System Architecture */}
+          <div className="lg:col-span-6 flex flex-col space-y-4">
+            {/* Project Visual Preview Frame */}
+            {project.image && (
+              <div className="relative rounded-2xl overflow-hidden bg-[#060807] border border-[#47f59c]/25 shadow-[inset_0_0_24px_rgba(71,245,156,0.05)]">
+                {/* Corner Mint Ticks */}
+                <span
+                  aria-hidden="true"
+                  className="pointer-events-none absolute top-2 left-2 z-20 w-2.5 h-2.5 border-t border-l border-[#47f59c]/80"
+                />
+                <span
+                  aria-hidden="true"
+                  className="pointer-events-none absolute bottom-2 right-2 z-20 w-2.5 h-2.5 border-b border-r border-[#47f59c]/80"
+                />
 
-              {project.architecture?.length > 0 && (
-                <div className="mt-5">
-                  <div className="flex items-center gap-2 mb-3">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#47f59c] shadow-[0_0_8px_#47f59c]" />
-                    <h4 className="font-mono text-[11px] font-semibold tracking-[0.18em] uppercase text-[#47f59c]">
-                      System Architecture
-                    </h4>
+                {!hasImageError ? (
+                  <button
+                    type="button"
+                    onClick={() => setZoomedIndex(activeIndex)}
+                    aria-label={`Expand ${project.title} preview image`}
+                    className="group/img relative block w-full aspect-[16/9] overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#47f59c]"
+                  >
+                    <img
+                      src={project.image}
+                      alt={`${project.title} preview`}
+                      onError={() => setFailedImageIndex(activeIndex)}
+                      className="w-full h-full object-cover object-center transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover/img:scale-[1.03]"
+                    />
+                    <div
+                      aria-hidden="true"
+                      className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#060807]/80 via-transparent to-transparent opacity-70 group-hover/img:opacity-90 transition-opacity"
+                    />
+                    <span className="absolute bottom-2.5 right-2.5 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full font-mono text-[10px] font-medium text-zinc-100 bg-[#0b0e0d]/90 border border-[#47f59c]/40 backdrop-blur-md group-hover/img:text-[#47f59c] transition-colors">
+                      <Maximize2 className="w-3 h-3 text-[#47f59c]" />
+                      <span>Expand View</span>
+                    </span>
+                  </button>
+                ) : (
+                  <div className="flex flex-col items-center justify-center w-full h-36 px-4 text-center bg-[radial-gradient(rgba(71,245,156,0.1)_1px,transparent_1px)] [background-size:16px_16px]">
+                    <ImageOff className="w-5 h-5 text-[#47f59c]/70 mb-1.5" />
+                    <span className="font-mono text-[11px] font-semibold text-zinc-300">
+                      Visual Preview Pending
+                    </span>
+                    <span className="font-mono text-[10px] text-zinc-500 mt-0.5 truncate max-w-full">
+                      Path: {project.image}
+                    </span>
                   </div>
+                )}
+              </div>
+            )}
 
-                  <ul className="space-y-2.5">
-                    {project.architecture.map((point, idx) => (
-                      <li
-                        key={point}
-                        className="flex items-start gap-3 p-3 rounded-xl bg-white/[0.025] border border-white/[0.06] text-xs sm:text-[13px] leading-relaxed text-zinc-300"
-                      >
-                        <span className="shrink-0 mt-0.5 font-mono text-[10px] font-semibold px-1.5 py-0.5 rounded bg-[#47f59c]/10 text-[#47f59c] border border-[#47f59c]/25">
-                          {String(idx + 1).padStart(2, '0')}
-                        </span>
-                        <span>{point}</span>
-                      </li>
-                    ))}
-                  </ul>
+            <p className="text-sm leading-relaxed text-zinc-300">
+              {project.summary}
+            </p>
+
+            {project.architecture?.length > 0 && (
+              <div>
+                <div className="flex items-center gap-2 mb-2.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#47f59c] shadow-[0_0_8px_#47f59c]" />
+                  <h4 className="font-mono text-[11px] font-semibold tracking-[0.18em] uppercase text-[#47f59c]">
+                    System Architecture
+                  </h4>
                 </div>
-              )}
-            </div>
+
+                <ul className="space-y-2">
+                  {project.architecture.map((point, idx) => (
+                    <li
+                      key={point}
+                      className="flex items-start gap-2.5 p-2.5 rounded-xl bg-white/[0.025] border border-white/[0.06] text-xs sm:text-[13px] leading-relaxed text-zinc-300"
+                    >
+                      <span className="shrink-0 mt-0.5 font-mono text-[10px] font-semibold px-1.5 py-0.5 rounded bg-[#47f59c]/10 text-[#47f59c] border border-[#47f59c]/25">
+                        {String(idx + 1).padStart(2, '0')}
+                      </span>
+                      <span>{point}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
 
           {/* Right Column: Interactive Tech-Stack Spider-Nest Canvas */}
@@ -445,7 +513,7 @@ export function ProjectSpiderNestModal({
               </span>
             </div>
 
-            <div className="relative w-full h-[20rem] sm:h-[22rem] flex-1 rounded-2xl bg-[#060807] border border-[#47f59c]/20 shadow-[inset_0_0_40px_rgba(71,245,156,0.06)] overflow-hidden">
+            <div className="relative w-full min-h-[20rem] sm:min-h-[24rem] flex-1 rounded-2xl bg-[#060807] border border-[#47f59c]/20 shadow-[inset_0_0_40px_rgba(71,245,156,0.06)] overflow-hidden">
               {/* Radial Center Glow */}
               <div
                 aria-hidden="true"
@@ -646,6 +714,38 @@ export function ProjectSpiderNestModal({
             ))}
           </div>
         </div>
+
+        {/* Fullscreen Image Lightbox Overlay */}
+        {isImageZoomed && project.image && !hasImageError && (
+          <div
+            onClick={() => setZoomedIndex(null)}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-8 bg-[#050607]/95 backdrop-blur-2xl"
+          >
+            <div
+              onClick={(e) => e.stopPropagation()}
+              className="relative max-w-5xl w-full rounded-2xl overflow-hidden border border-[#47f59c]/40 bg-[#0b0e0d] shadow-[0_0_60px_rgba(0,0,0,0.95)]"
+            >
+              <div className="flex items-center justify-between px-4 py-3 border-b border-white/[0.08]">
+                <span className="font-mono text-xs font-semibold text-white truncate">
+                  {project.title}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setZoomedIndex(null)}
+                  aria-label="Close expanded image"
+                  className="p-1.5 rounded-full text-zinc-400 bg-white/[0.05] hover:text-[#47f59c] transition-colors"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+              <img
+                src={project.image}
+                alt={`${project.title} full preview`}
+                className="w-full max-h-[80vh] object-contain bg-[#060708]"
+              />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

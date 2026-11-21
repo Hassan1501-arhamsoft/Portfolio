@@ -1,4 +1,6 @@
 import profilePic from '../../../assets/images/profile-pic.png';
+import resumePdf from '../../../assets/HassanResume.pdf';
+
 export const BRAND = {
   monogram: 'HM',
   name: 'Hassan Maqbool',
@@ -15,17 +17,17 @@ export const NAV_ITEMS = [
   { id: 'contact', label: 'Contact', href: '#contact' },
 ];
 
-export const RESUME_URL = '/HassanResume.pdf';
+export const RESUME_URL = resumePdf;
 
 export const SOCIAL_LINKS = [
   {
     id: 'github',
     label: 'GitHub',
-    href: 'https://github.com/hassan427726',
+    href: 'https://github.com/hassan42772',
   },
   {
     id: 'linkedin',
     label: 'LinkedIn',
-    href: 'https://www.linkedin.com/in/hassan-maqbool',
+    href: 'https://www.linkedin.com/in/hassan-maqbool-dev',
   },
 ];

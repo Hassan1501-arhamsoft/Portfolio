@@ -3,7 +3,7 @@ export const EXPERIENCE_DATA = [
     id: 'fullstack-ai-dev',
     role: 'Full-Stack MERN & AI Integration Developer',
     organization: 'Software Engineering Role · Lahore',
-    period: '2025 — Present',
+    period: '2026 — Present',
     type: 'Full-Time',
     highlights: [
       'Architect and maintain full-stack MERN applications with RESTful APIs, JWT authentication, and structured MongoDB/SQL schemas.',
@@ -16,7 +16,7 @@ export const EXPERIENCE_DATA = [
     id: 'cm-it-internship',
     role: 'Software Engineering Intern',
     organization: "Chief Minister's IT Internship Program · Punjab",
-    period: '2024 — 2025',
+    period: '2026 — present',
     type: 'Internship',
     highlights: [
       'Developed full-stack web modules and responsive frontend interfaces using React.js, Tailwind CSS, and Node.js.',
