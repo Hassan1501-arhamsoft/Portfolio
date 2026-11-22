@@ -85,6 +85,17 @@ export function ProjectCard({
       onSelect?.(project, index);
     }
   };
+// Inside ProjectCard in src/features/projects/components/ProjectCard.jsx
+const preloadedRef = useRef(false);
+
+const preloadProjectImage = () => {
+  if (preloadedRef.current || !project.image) return;
+  preloadedRef.current = true;
+  const img = new Image();
+  img.src = project.image;
+};
+
+
 
   return (
     <article
@@ -96,10 +107,17 @@ export function ProjectCard({
       onClick={() => onSelect?.(project, index)}
       onKeyDown={handleKeyDown}
       onMouseMove={handleMouseMove}
-      onMouseEnter={() => onHoverChange?.(index)}
+      onMouseEnter={() => {
+  preloadProjectImage();
+  onHoverChange?.(index);
+}}
       onMouseLeave={() => onHoverChange?.(null)}
-      onFocus={() => onHoverChange?.(index)}
+      onFocus={() => {
+  preloadProjectImage();
+  onHoverChange?.(index);
+}}
       onBlur={() => onHoverChange?.(null)}
+      
       className="group relative w-full cursor-pointer select-none focus-visible:outline-none"
     >
       {/* Outer Ambient Mint Glow on Hover / Active */}
@@ -446,6 +464,7 @@ export function ProjectSpiderNestModal({
                     <img
                       src={project.image}
                       alt={`${project.title} preview`}
+                      decoding="async"
                       onError={() => setFailedImageIndex(activeIndex)}
                       className="w-full h-full object-cover object-center transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover/img:scale-[1.03]"
                     />
