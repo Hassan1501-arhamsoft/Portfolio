@@ -440,6 +440,9 @@ export function AchievementSpiderNestModal({
                     <img
                       src={item.image}
                       alt={item.title}
+                      width="900"
+                      height="1023"
+                      loading="lazy"
                       decoding="async"
                       onError={() => setFailedImageIndex(activeIndex)}
                       className="w-full h-full object-cover object-center transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover/img:scale-[1.03]"

@@ -5,8 +5,7 @@ import * as servicesModule from '../data/services.data';
 import { ServiceCard, ServiceSpiderNestModal } from './ServiceCard';
 import { ParticleCanvas } from '../../../shared/components/ParticleCanvas';
 
-const SERVICES =
-  servicesModule.SERVICES || servicesModule.SERVICES_DATA || [];
+const SERVICES = servicesModule.SERVICES_DATA || [];
 
 export function ServicesSection() {
   const stageRef = useRef(null);
