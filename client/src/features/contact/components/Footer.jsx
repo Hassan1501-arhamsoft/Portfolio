@@ -128,7 +128,7 @@ export function Footer() {
                       style={{ clipPath: HEX_CLIP }}
                       className="flex items-center justify-center w-full h-full bg-[#090d0b] font-mono text-sm font-bold tracking-wider text-[#47f59c]"
                     >
-                      {BRAND.monogram}
+                      <img src={BRAND.avatarUrl} alt="Brand Logo" />
                     </span>
                   </div>
                 </div>
