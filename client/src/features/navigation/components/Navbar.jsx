@@ -199,6 +199,10 @@ export function Navbar() {
                   <img
                     src={BRAND.avatarUrl}
                     alt={BRAND.name}
+                    width="800"
+                    height="833"
+                    loading="eager"
+                    decoding="async"
                     onError={() => setImgError(true)}
                     className="w-full h-full object-cover object-top"
                   />

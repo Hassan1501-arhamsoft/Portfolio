@@ -84,6 +84,10 @@ export function MobileDrawer({ isOpen, onClose, activeId }) {
                     <img
                       src={BRAND.avatarUrl}
                       alt={BRAND.name}
+                      width="800"
+                      height="833"
+                      loading="lazy"
+                      decoding="async"
                       onError={() => setImgError(true)}
                       className="w-full h-full object-cover object-top"
                     />

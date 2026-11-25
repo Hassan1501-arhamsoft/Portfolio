@@ -464,6 +464,9 @@ export function ProjectSpiderNestModal({
                     <img
                       src={project.image}
                       alt={`${project.title} preview`}
+                      width="1600"
+                      height="900"
+                      loading="lazy"
                       decoding="async"
                       onError={() => setFailedImageIndex(activeIndex)}
                       className="w-full h-full object-cover object-center transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover/img:scale-[1.03]"
@@ -760,6 +763,10 @@ export function ProjectSpiderNestModal({
               <img
                 src={project.image}
                 alt={`${project.title} full preview`}
+                width="1600"
+                height="900"
+                loading="lazy"
+                decoding="async"
                 className="w-full max-h-[80vh] object-contain bg-[#060708]"
               />
             </div>

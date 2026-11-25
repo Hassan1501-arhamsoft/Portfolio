@@ -1,17 +1,17 @@
 // import profileImg from '../../../assets/images/profile-pic.png';
-import chatbot from '../../../assets/images/ai-chatbot.png';
-import facebook from '../../../assets/images/facebook-new.png';
-import expertTutor from '../../../assets/images/ExpertTutorWebsiteProject.png';
-import smartcar from '../../../assets/images/smartCarProject.jpg';
-import greenhouse from '../../../assets/images/GreenHouseproject.jpg';
-import faultDetection from '../../../assets/images/faultdetectionProject.jpg';
-import solarcleaner from '../../../assets/images/solarcleaner.png';
-import smartalram from '../../../assets/images/SmartAlarmProject.png';
-import codetector from '../../../assets/images/Codetectorproject.png';
-import smartrain from '../../../assets/images/RainShalterproject.png';
-import smartParking from '../../../assets/images/smartparkingsystem.png';
-import blinkstick from '../../../assets/images/blindstick.jpg';
-import smartDustbin from '../../../assets/images/smartdustbin.jpg';
+import chatbot from '../../../assets/images/ai-chatbot.webp';
+import facebook from '../../../assets/images/facebook-new.webp';
+import expertTutor from '../../../assets/images/ExpertTutorWebsiteProject.webp';
+import smartcar from '../../../assets/images/smartCarProject.webp';
+import greenhouse from '../../../assets/images/GreenHouseproject.webp';
+import faultDetection from '../../../assets/images/faultdetectionProject.webp';
+import solarcleaner from '../../../assets/images/solarcleaner.webp';
+import smartalram from '../../../assets/images/SmartAlarmProject.webp';
+import codetector from '../../../assets/images/Codetectorproject.webp';
+import smartrain from '../../../assets/images/RainShalterproject.webp';
+import smartParking from '../../../assets/images/smartparkingsystem.webp';
+import blinkstick from '../../../assets/images/blindstick.webp';
+import smartDustbin from '../../../assets/images/smartdustbin.webp';
 
 export const PROJECT_CATEGORIES = [
   'All',

@@ -1,4 +1,4 @@
-import profileImg from '../../../assets/images/profile-pic.png';
+import profileImg from '../../../assets/images/profile-pic.webp';
 
 export const HERO_DATA = {
   availability: 'Open to Full-Stack & AI Engineering Roles',

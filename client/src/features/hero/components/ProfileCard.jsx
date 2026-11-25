@@ -238,6 +238,9 @@ export function ProfileCard() {
               <img
                 src={profileCard.avatarUrl}
                 alt={`${HERO_DATA.name} — ${HERO_DATA.role}`}
+                width="800"
+                height="833"
+                loading="eager"
                 fetchPriority="high"
                 decoding="async"
                 onError={() => setImgError(true)}

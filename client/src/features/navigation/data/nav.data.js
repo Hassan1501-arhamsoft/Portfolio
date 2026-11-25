@@ -1,4 +1,4 @@
-import profilePic from '../../../assets/images/profile-pic.png';
+import profilePic from '../../../assets/images/profile-pic.webp';
 import resumePdf from '../../../assets/HassanResume.pdf';
 
 export const BRAND = {
