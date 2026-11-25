@@ -8,6 +8,7 @@ import {
   Send,
 } from 'lucide-react';
 import { CONTACT_DATA } from '../data/contact.data';
+import emailjs from '@emailjs/browser';
 
 const INITIAL_FORM = {
   name: '',
@@ -24,6 +25,10 @@ const QUICK_SUBJECTS = [
   'Full-Stack MERN Build',
   'System Architecture Inquiry',
 ];
+
+const EMAILJS_SERVICE_ID = 'service_x327tdf';
+const EMAILJS_TEMPLATE_ID = 'template_ck7suxs';
+const EMAILJS_PUBLIC_KEY = 'Kyzybq2rkIOpzSGjR';
 
 function validateForm(values) {
   const errors = {};
@@ -113,35 +118,16 @@ export function ContactForm() {
       return;
     }
 
-    if (!CONTACT_DATA.endpoint) {
-      setStatus('error');
-      setFeedbackMessage(
-        `Form endpoint not configured yet. Copy ${CONTACT_DATA.email} on the left to email me directly.`
-      );
-      return;
-    }
-
     setStatus('submitting');
     setFeedbackMessage('');
 
     try {
-      const response = await fetch(CONTACT_DATA.endpoint, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-        },
-        body: JSON.stringify({
-          name: values.name.trim(),
-          email: values.email.trim(),
-          subject: values.subject.trim(),
-          message: values.message.trim(),
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Submission failed');
-      }
+      await emailjs.sendForm(
+        EMAILJS_SERVICE_ID,
+        EMAILJS_TEMPLATE_ID,
+        formRef.current,
+        { publicKey: EMAILJS_PUBLIC_KEY }
+      );
 
       setStatus('success');
       setFeedbackMessage(

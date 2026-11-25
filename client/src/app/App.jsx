@@ -6,10 +6,13 @@ import { ExperienceSection } from '../features/experience/components/ExperienceS
 import { ProjectsSection } from '../features/projects/components/ProjectsSection';
 import { ContactSection } from '../features/contact/components/ContactSection';
 import { Footer } from '../features/contact/components/Footer';
+import { AchievementsSection } from '../features/achievements/components/AchievementsSection';
+import { WallCrackIntro } from '../shared/components/WallCrackIntro';
 
 export default function App() {
   return (
     <div className="min-h-screen bg-[#060708] text-slate-100">
+      <WallCrackIntro playOncePerSession={false} />
       <Navbar />
       <main>
         <HeroSection />
@@ -17,6 +20,7 @@ export default function App() {
         <ServicesSection />
         <ExperienceSection />
         <ProjectsSection />
+        <AchievementsSection />
         <ContactSection />
       </main>
       <Footer />

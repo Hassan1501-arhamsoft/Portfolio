@@ -27,6 +27,7 @@ function normalizeExperienceItem(item = {}) {
   const period = item.period || item.duration || item.date || '';
   const location = item.location || '';
   const summary = item.summary || item.description || '';
+  const type = item.type || '';
   const highlights =
     item.highlights || item.achievements || item.responsibilities || [];
   const rawNodes =
@@ -39,13 +40,14 @@ function normalizeExperienceItem(item = {}) {
           h.length > 34 ? `${h.slice(0, 32).trim()}…` : h
         );
 
-  const rawType = (item.type || '').toLowerCase();
+  const rawType = type.toLowerCase();
   const isEducation =
     rawType.includes('edu') ||
     rawType.includes('degree') ||
-    /bachelor|university|bscs|bs/i.test(`${title} ${organization}`);
+    /\b(bachelor|university|bscs|bs)\b/i.test(`${title} ${organization}`);
   const isInternship =
-    rawType.includes('intern') || /intern/i.test(`${title} ${organization}`);
+    /\bintern(ship)?\b/i.test(rawType) ||
+    /\bintern(ship)?\b/i.test(`${title} ${organization}`);
   const isCurrent =
     Boolean(item.current) || /present|current|now/i.test(period);
 
@@ -56,6 +58,7 @@ function normalizeExperienceItem(item = {}) {
     period,
     location,
     summary,
+    type,
     highlights,
     webNodes,
     isEducation,
@@ -70,7 +73,7 @@ function normalizeExperienceItem(item = {}) {
 function MilestoneIcon({ data, className = 'w-4 h-4' }) {
   if (data.isEducation) return <GraduationCap className={className} />;
   if (data.isInternship) return <Terminal className={className} />;
-  if ((data.type || '').toLowerCase().includes('cert')) {
+  if (data.type.toLowerCase().includes('cert')) {
     return <Award className={className} />;
   }
   return <Briefcase className={className} />;
@@ -253,11 +256,12 @@ export function TimelineItem({
             </span>
           ) : (
             <span className="font-mono text-[10px] tracking-wider uppercase px-2 py-0.5 rounded-full bg-white/[0.03] border border-white/[0.08] text-zinc-400">
-              {data.isEducation
-                ? 'Degree'
-                : data.isInternship
-                ? 'Internship'
-                : 'Milestone'}
+              {data.type ||
+                (data.isEducation
+                  ? 'Degree'
+                  : data.isInternship
+                  ? 'Internship'
+                  : 'Milestone')}
             </span>
           )}
         </div>

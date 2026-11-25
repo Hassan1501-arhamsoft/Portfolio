@@ -35,8 +35,8 @@ const CHAMFER_CLIP =
   'polygon(16px 0%, calc(100% - 16px) 0%, 100% 16px, 100% calc(100% - 16px), calc(100% - 16px) 100%, 16px 100%, 0% calc(100% - 16px), 0% 16px)';
 
 /**
- * Computes non-overlapping elliptical polar coordinates (in % of container)
- * placed on diagonal corners/rings so multi-word deliverable pills have room.
+ * Computes non-overlapping elliptical polar coordinates padded safely
+ * so deliverable pills never clip on mobile or desktop containers.
  */
 function buildServiceWebNodes(deliverables = []) {
   const total = deliverables.length;
@@ -52,13 +52,13 @@ function buildServiceWebNodes(deliverables = []) {
     const countInRing = isInner ? innerCount : outerCount;
 
     const angleStep = (Math.PI * 2) / countInRing;
-    // Start at -45deg for 4 nodes so pills sit cleanly in the 4 quadrants
     const startOffset = countInRing === 4 ? -Math.PI / 4 : -Math.PI / 2 + 0.25;
     const baseAngle = isInner ? startOffset : startOffset + angleStep / 2;
     const angle = baseAngle + ringIndex * angleStep;
 
-    const rx = useDualRing ? (isInner ? 23 : 38) : 33;
-    const ry = useDualRing ? (isInner ? 23 : 37) : 32;
+    // Clamped horizontal radii so wide deliverable pills stay inside mobile bounds
+    const rx = useDualRing ? (isInner ? 19 : 29) : 26;
+    const ry = useDualRing ? (isInner ? 22 : 37) : 31;
 
     const x = +(50 + Math.cos(angle) * rx).toFixed(2);
     const y = +(50 + Math.sin(angle) * ry).toFixed(2);
@@ -117,6 +117,8 @@ export function ServiceCard({
       onMouseMove={handleMouseMove}
       onMouseEnter={() => onHoverChange?.(index)}
       onMouseLeave={() => onHoverChange?.(null)}
+      onFocus={() => onHoverChange?.(index)}
+      onBlur={() => onHoverChange?.(null)}
       className="group relative w-full cursor-pointer select-none focus-visible:outline-none"
     >
       {/* Outer Ambient Mint Glow on Hover / Active */}
@@ -150,7 +152,6 @@ export function ServiceCard({
             strokeWidth="1.4"
             className="transition-colors duration-300 group-hover:stroke-[#47f59c]/75"
           />
-          {/* Corner Mint Accent Ticks */}
           <polyline
             points="1,24 1,16 16,1 24,1"
             stroke="#47f59c"
@@ -236,15 +237,12 @@ export function ServiceSpiderNestModal({
   onClose,
   onSelectIndex,
 }) {
-  const [hoveredNode, setHoveredNode] = useState(null);
+  const [hoverState, setHoverState] = useState({ forIndex: null, node: null });
+  const hoveredNode =
+    hoverState.forIndex === activeIndex ? hoverState.node : null;
 
   const service =
     typeof activeIndex === 'number' ? services[activeIndex] : null;
-
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setHoveredNode(null);
-  }, [activeIndex]);
 
   useEffect(() => {
     if (!service) return;
@@ -304,13 +302,15 @@ export function ServiceSpiderNestModal({
   if (!service) return null;
 
   const Icon = SERVICE_ICONS[service.icon] || Layers;
+  const setActiveNode = (nodeIdx) =>
+    setHoverState({ forIndex: activeIndex, node: nodeIdx });
 
   return (
     <div
       role="dialog"
       aria-modal="true"
       aria-label={`${service.title} deliverables spider nest`}
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto"
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 overflow-y-auto"
     >
       {/* Frosted Pitch-Black Backdrop */}
       <div
@@ -328,11 +328,11 @@ export function ServiceSpiderNestModal({
         />
 
         {/* Modal Header */}
-        <div className="flex flex-wrap items-start justify-between gap-4 p-5 sm:p-6 border-b border-white/[0.07]">
-          <div className="flex items-start gap-3.5">
+        <div className="flex flex-wrap items-start justify-between gap-3 sm:gap-4 p-4 sm:p-6 border-b border-white/[0.07]">
+          <div className="flex items-start gap-3 sm:gap-3.5 min-w-0">
             <div
               style={{ clipPath: HEX_CLIP }}
-              className="flex items-center justify-center w-11 h-12 p-[1.5px] bg-gradient-to-b from-[#47f59c] to-[#10b981] shrink-0 mt-0.5"
+              className="flex items-center justify-center w-10 h-11 sm:w-11 sm:h-12 p-[1.5px] bg-gradient-to-b from-[#47f59c] to-[#10b981] shrink-0 mt-0.5"
             >
               <div
                 style={{ clipPath: HEX_CLIP }}
@@ -342,14 +342,14 @@ export function ServiceSpiderNestModal({
               </div>
             </div>
 
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="font-mono text-[11px] font-semibold tracking-widest uppercase text-[#47f59c]">
+            <div className="min-w-0">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="font-mono text-[10px] sm:text-[11px] font-semibold tracking-widest uppercase text-[#47f59c]">
                   Capability {String(activeIndex + 1).padStart(2, '0')} /{' '}
                   {String(services.length).padStart(2, '0')}
                 </span>
                 <span className="text-zinc-600">·</span>
-                <span className="font-mono text-[11px] text-zinc-400">
+                <span className="font-mono text-[10px] sm:text-[11px] text-zinc-400">
                   {webNodes.length} Core Deliverables
                 </span>
               </div>
@@ -363,7 +363,7 @@ export function ServiceSpiderNestModal({
             <a
               href="#contact"
               onClick={onClose}
-              className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-zinc-950 bg-[#47f59c] rounded-full shadow-[0_0_24px_-4px_rgba(71,245,156,0.55)] hover:bg-[#5ef9ab] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#47f59c]"
+              className="inline-flex items-center gap-1.5 px-3.5 sm:px-4 py-2 text-xs font-semibold text-zinc-950 bg-[#47f59c] rounded-full shadow-[0_0_24px_-4px_rgba(71,245,156,0.55)] hover:bg-[#5ef9ab] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#47f59c]"
             >
               <span>Scope This Build</span>
               <ArrowUpRight className="w-3.5 h-3.5" />
@@ -381,7 +381,7 @@ export function ServiceSpiderNestModal({
         </div>
 
         {/* Two-Column Body: Synced Deliverables Breakdown + Interactive Spider-Nest Web */}
-        <div className="grid lg:grid-cols-12 gap-6 p-5 sm:p-6">
+        <div className="grid lg:grid-cols-12 gap-5 sm:gap-6 p-4 sm:p-6">
           {/* Left Column: Summary & Synced Key Deliverables */}
           <div className="lg:col-span-5 flex flex-col justify-between space-y-5">
             <div>
@@ -403,8 +403,9 @@ export function ServiceSpiderNestModal({
                     return (
                       <li
                         key={node.label}
-                        onMouseEnter={() => setHoveredNode(node.index)}
-                        onMouseLeave={() => setHoveredNode(null)}
+                        onClick={() => setActiveNode(isLit ? null : node.index)}
+                        onMouseEnter={() => setActiveNode(node.index)}
+                        onMouseLeave={() => setActiveNode(null)}
                         className={`flex items-center gap-3 p-3 rounded-xl border text-xs sm:text-[13px] transition-all duration-200 cursor-pointer ${
                           isLit
                             ? 'bg-[#0f2419]/80 border-[#47f59c]/60 text-white shadow-[0_0_20px_-6px_rgba(71,245,156,0.4)]'
@@ -429,18 +430,19 @@ export function ServiceSpiderNestModal({
             </div>
           </div>
 
-          {/* Right Column: Interactive Deliverables Spider-Nest Web */}
+          {/* Right Column: Interactive Deliverables Spider-Nest Web (Explicit Height Fixed for Mobile) */}
           <div className="lg:col-span-7 flex flex-col">
-            <div className="flex items-center justify-between mb-2.5">
-              <span className="font-mono text-[11px] font-semibold tracking-[0.18em] uppercase text-zinc-400">
+            <div className="flex items-center justify-between gap-2 mb-2.5">
+              <span className="font-mono text-[11px] font-semibold tracking-[0.14em] uppercase text-zinc-400">
                 Deliverables Constellation ({webNodes.length} Nodes)
               </span>
-              <span className="font-mono text-[10px] text-[#47f59c]">
-                Hover any node or item to trace silk
+              <span className="font-mono text-[10px] text-[#47f59c] shrink-0">
+                <span className="sm:hidden">Tap nodes</span>
+                <span className="hidden sm:inline">Hover nodes to trace silk</span>
               </span>
             </div>
 
-            <div className="relative w-full h-[20rem] sm:h-[22rem] flex-1 rounded-2xl bg-[#060807] border border-[#47f59c]/20 shadow-[inset_0_0_40px_rgba(71,245,156,0.06)] overflow-hidden">
+            <div className="relative w-full h-[22rem] sm:h-[25rem] min-h-[22rem] shrink-0 lg:flex-1 rounded-2xl bg-[#060807] border border-[#47f59c]/20 shadow-[inset_0_0_40px_rgba(71,245,156,0.06)] overflow-hidden">
               {/* Radial Center Glow */}
               <div
                 aria-hidden="true"
@@ -467,7 +469,7 @@ export function ServiceSpiderNestModal({
                 <ellipse
                   cx="50"
                   cy="50"
-                  rx="32"
+                  rx="28"
                   ry="30"
                   fill="none"
                   stroke="rgba(255, 255, 255, 0.08)"
@@ -540,10 +542,10 @@ export function ServiceSpiderNestModal({
               {/* Central Service Core Hub */}
               <div
                 aria-hidden="true"
-                className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 flex items-center justify-center w-12 h-12 rounded-full bg-[#0b120e] border border-[#47f59c]/65 text-[#47f59c] shadow-[0_0_28px_rgba(71,245,156,0.55),inset_0_1px_0_rgba(255,255,255,0.25)]"
+                className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 flex items-center justify-center w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-[#0b120e] border border-[#47f59c]/65 text-[#47f59c] shadow-[0_0_28px_rgba(71,245,156,0.55),inset_0_1px_0_rgba(255,255,255,0.25)]"
               >
                 <span className="absolute inset-0 rounded-full border border-[#47f59c]/40 animate-ping opacity-40 motion-reduce:hidden" />
-                <Icon className="w-5 h-5 relative z-10" />
+                <Icon className="w-4 h-4 sm:w-5 sm:h-5 relative z-10" />
               </div>
 
               {/* Deliverable Vertex Nodes Placed on Every Point of the Nest */}
@@ -557,11 +559,12 @@ export function ServiceSpiderNestModal({
                       left: `${node.x}%`,
                       top: `${node.y}%`,
                     }}
-                    onMouseEnter={() => setHoveredNode(node.index)}
-                    onMouseLeave={() => setHoveredNode(null)}
-                    onFocus={() => setHoveredNode(node.index)}
-                    onBlur={() => setHoveredNode(null)}
-                    className={`absolute -translate-x-1/2 -translate-y-1/2 z-20 flex items-center gap-1.5 max-w-[175px] sm:max-w-[200px] px-2.5 py-1.5 rounded-full font-mono text-[10px] sm:text-[11px] font-medium border backdrop-blur-xl transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#47f59c] ${
+                    onClick={() => setActiveNode(isLit ? null : node.index)}
+                    onMouseEnter={() => setActiveNode(node.index)}
+                    onMouseLeave={() => setActiveNode(null)}
+                    onFocus={() => setActiveNode(node.index)}
+                    onBlur={() => setActiveNode(null)}
+                    className={`absolute -translate-x-1/2 -translate-y-1/2 z-20 flex items-center gap-1 sm:gap-1.5 max-w-[118px] sm:max-w-[180px] px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-full font-mono text-[9px] sm:text-[11px] font-medium border backdrop-blur-xl transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#47f59c] ${
                       isLit
                         ? 'z-30 scale-105 bg-[#0f2419]/95 text-white border-[#47f59c] shadow-[0_0_22px_rgba(71,245,156,0.6),inset_0_1px_0_rgba(255,255,255,0.3)]'
                         : 'bg-[#121619]/95 text-zinc-100 border-[#47f59c]/35 shadow-[0_8px_20px_rgba(0,0,0,0.85)] hover:border-[#47f59c]'
@@ -584,7 +587,7 @@ export function ServiceSpiderNestModal({
         </div>
 
         {/* Footer: Quick Service Orbit Switcher */}
-        <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-4 bg-white/[0.02] border-t border-white/[0.07]">
+        <div className="flex flex-wrap items-center justify-between gap-3 px-4 sm:px-5 py-3.5 sm:py-4 bg-white/[0.02] border-t border-white/[0.07]">
           <div className="flex items-center gap-1.5">
             <button
               type="button"

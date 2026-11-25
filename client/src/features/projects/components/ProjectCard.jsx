@@ -11,6 +11,9 @@ import {
   X,
 } from 'lucide-react';
 import { GitHubIcon } from '../../../shared/components/SocialIcons';
+// 1. Add this import at the top of ProjectCard.jsx:
+import { TechNodeIcon } from '../../../shared/components/TechNodeIcon';
+
 
 const HEX_CLIP =
   'polygon(50% 0%, 95% 25%, 95% 75%, 50% 100%, 5% 75%, 5% 25%)';
@@ -23,6 +26,7 @@ const CHAMFER_CLIP =
  * Computes non-overlapping elliptical polar coordinates (in % of container)
  * across 1 or 2 concentric web rings for project tech-stack nodes.
  */
+// 2. Update buildProjectWebNodes radii so icon + text pills never clip at container walls:
 function buildProjectWebNodes(stack = []) {
   const total = stack.length;
   if (total === 0) return [];
@@ -40,8 +44,7 @@ function buildProjectWebNodes(stack = []) {
     const baseAngle = -Math.PI / 2 + (isInner ? 0.25 : 0.25 + angleStep / 2);
     const angle = baseAngle + ringIndex * angleStep;
 
-    // Clamped horizontal radius so wide stack pills never clip at container walls
-    const rx = useDualRing ? (isInner ? 21 : 34) : 30;
+    const rx = useDualRing ? (isInner ? 20 : 31) : 28;
     const ry = useDualRing ? (isInner ? 22 : 37) : 31;
 
     const x = +(50 + Math.cos(angle) * rx).toFixed(2);
@@ -261,11 +264,11 @@ export function ProjectSpiderNestModal({
   activeIndex,
   onClose,
   onSelectIndex,
+
 }) {
   const [hoverState, setHoverState] = useState({ forIndex: null, node: null });
   const [failedImageIndex, setFailedImageIndex] = useState(null);
   const [zoomedIndex, setZoomedIndex] = useState(null);
-
   const hoveredNode =
     hoverState.forIndex === activeIndex ? hoverState.node : null;
   const hasImageError = failedImageIndex === activeIndex;
@@ -664,23 +667,24 @@ export function ProjectSpiderNestModal({
                     onBlur={() =>
                       setHoverState({ forIndex: activeIndex, node: null })
                     }
-                    className={`absolute -translate-x-1/2 -translate-y-1/2 z-20 flex items-center gap-1.5 px-2.5 py-1 rounded-full font-mono text-[10px] sm:text-[11px] font-medium whitespace-nowrap border backdrop-blur-xl transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#47f59c] ${
+                    className={`absolute -translate-x-1/2 -translate-y-1/2 z-20 flex items-center gap-1.5 max-w-[148px] sm:max-w-[175px] px-2.5 py-1.5 rounded-full font-mono text-[10px] sm:text-[11px] font-medium border backdrop-blur-xl transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#47f59c] ${
                       isLit
-                        ? 'z-30 scale-110 bg-[#0f2419]/95 text-white border-[#47f59c] shadow-[0_0_22px_rgba(71,245,156,0.6),inset_0_1px_0_rgba(255,255,255,0.3)]'
+                        ? 'z-30 scale-105 bg-[#0f2419]/95 text-white border-[#47f59c] shadow-[0_0_22px_rgba(71,245,156,0.6),inset_0_1px_0_rgba(255,255,255,0.3)]'
                         : node.isInner
                         ? 'bg-[#121619]/95 text-zinc-100 border-[#47f59c]/40 shadow-[0_8px_20px_rgba(0,0,0,0.85)] hover:border-[#47f59c]'
                         : 'bg-[#111316]/90 text-zinc-200 border-white/[0.15] shadow-[0_8px_20px_rgba(0,0,0,0.85)] hover:border-[#47f59c]/70'
                     }`}
                   >
                     <span
-                      aria-hidden="true"
-                      className={`w-1.5 h-1.5 rounded-full shrink-0 ${
+                      className={`flex items-center justify-center shrink-0 transition-transform duration-300 ${
                         isLit
-                          ? 'bg-[#47f59c] scale-125 shadow-[0_0_8px_#47f59c]'
-                          : 'bg-[#47f59c]/85'
+                          ? 'text-[#7efcc0] scale-110 drop-shadow-[0_0_6px_rgba(71,245,156,0.75)]'
+                          : 'text-[#47f59c]'
                       }`}
-                    />
-                    <span>{node.label}</span>
+                    >
+                      <TechNodeIcon label={node.label} className="w-3.5 h-3.5" />
+                    </span>
+                    <span className="truncate">{node.label}</span>
                   </button>
                 );
               })}

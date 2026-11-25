@@ -14,6 +14,7 @@ export const NAV_ITEMS = [
   { id: 'services', label: 'Services', href: '#services' },
   { id: 'experience', label: 'Experience', href: '#experience' },
   { id: 'projects', label: 'Projects', href: '#projects' },
+  { id: 'achievements', label: 'Achievements', href: '#achievements' },
   { id: 'contact', label: 'Contact', href: '#contact' },
 ];
 

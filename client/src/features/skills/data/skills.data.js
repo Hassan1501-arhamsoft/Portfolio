@@ -29,12 +29,12 @@ export const SKILL_CATEGORIES = [
       'MongoDB & Mongoose',
       'PostgreSQL (Supabase)',
       'MySQL & Sequelize',
-      'JWT & RBAC Auth',
+      'JWT & (RBAC & ABAC) Auth',
       'Jest & Supertest',
       'Swagger / OpenAPI',
     ],
   },
-  {
+  { 
     id: 'frontend',
     title: 'Frontend Architecture',
     icon: 'layout',
@@ -52,19 +52,19 @@ export const SKILL_CATEGORIES = [
   },
   {
     id: 'realtime-iot',
-    title: 'Real-Time, IoT & Tooling',
+    title: 'IoT & Embedded Systems',
     icon: 'cpu',
     description:
-      'Low-latency peer communication, microcontroller telemetry, and CI/CD deployment workflows.',
+      'Microcontroller firmware, sensor-actuator integration, and real-time hardware-to-cloud telemetry.',
     skills: [
+      'ESP32 & Arduino',
+      'Embedded C / C++',
+      'MQTT & REST',
+      'Sensors & Relays',
+      'Motor & Servo',
+      'I2C / UART / RFID',
       'Socket.IO',
-      'WebRTC Audio',
-      'Arduino Uno',
-      'RFID & I2C Hardware',
-      'Git & GitHub',
-      'Vercel & Netlify',
-      'Railway',
-      'Linux & PowerShell',
+      'Node.js Telemetry',
     ],
   },
 ];
