@@ -1,10 +1,10 @@
 export const EXPERIENCE_DATA = [
   {
-    id: 'cm-it-internship',
+    id: 'it-solutions-arhamsoft',
     role: 'Full-Stack MERN & AI Integration Developer',
-    organization: 'ArhamSoft (Pvt.) Ltd. · Lahore, Pakistan',
+    organization: 'IT Solutions ArhamSoft (Pvt.) Ltd. · Lahore, Pakistan',
     period: '2026 — Present',
-    type: 'Internship',
+    type: 'Full Time',
     isCurrent: true,
     summary:
       'Architecting production MERN applications and guarded Retrieval-Augmented Generation (RAG) pipelines in a full-time software engineering role.',
