@@ -35,7 +35,7 @@ const CHAMFER_CLIP =
 
 /**
  * Computes non-overlapping elliptical polar coordinates padded safely
- * so deliverable pills never clip on mobile or desktop containers.
+ * so deliverable pills stay inside 360px+ mobile containers.
  */
 function buildServiceWebNodes(deliverables = []) {
   const total = deliverables.length;
@@ -55,9 +55,8 @@ function buildServiceWebNodes(deliverables = []) {
     const baseAngle = isInner ? startOffset : startOffset + angleStep / 2;
     const angle = baseAngle + ringIndex * angleStep;
 
-    // Clamped horizontal radii so wide deliverable pills stay inside mobile bounds
-    const rx = useDualRing ? (isInner ? 19 : 29) : 26;
-    const ry = useDualRing ? (isInner ? 22 : 37) : 31;
+    const rx = useDualRing ? (isInner ? 18 : 26) : 24;
+    const ry = useDualRing ? (isInner ? 21 : 36) : 30;
 
     const x = +(50 + Math.cos(angle) * rx).toFixed(2);
     const y = +(50 + Math.sin(angle) * ry).toFixed(2);
@@ -73,7 +72,7 @@ function buildServiceWebNodes(deliverables = []) {
 }
 
 /**
- * Chamfered Octagonal Orbital Service Pod
+ * Chamfered Octagonal Orbital Service Pod (Locked Against Grid/Flex Overflow)
  */
 export function ServiceCard({
   service,
@@ -118,7 +117,7 @@ export function ServiceCard({
       onMouseLeave={() => onHoverChange?.(null)}
       onFocus={() => onHoverChange?.(index)}
       onBlur={() => onHoverChange?.(null)}
-      className="group relative w-full cursor-pointer select-none focus-visible:outline-none"
+      className="group relative flex h-full w-full min-w-0 max-w-full cursor-pointer select-none focus-visible:outline-none"
     >
       {/* Outer Ambient Mint Glow on Hover / Active */}
       <div
@@ -131,7 +130,7 @@ export function ServiceCard({
       {/* Chamfered Octagon Pod Body */}
       <div
         style={{ clipPath: CHAMFER_CLIP }}
-        className={`relative p-4 sm:p-5 backdrop-blur-2xl transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.03] group-focus-visible:ring-2 group-focus-visible:ring-[#47f59c] motion-reduce:transform-none ${
+        className={`relative flex flex-col flex-1 w-full min-w-0 max-w-full overflow-hidden p-4 sm:p-5 backdrop-blur-2xl transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] sm:group-hover:scale-[1.03] group-focus-visible:ring-2 group-focus-visible:ring-[#47f59c] motion-reduce:transform-none ${
           isActive
             ? "bg-[#0e1713]/95"
             : "bg-[#101316]/92 group-hover:bg-[#121916]/95"
@@ -176,10 +175,10 @@ export function ServiceCard({
         />
 
         {/* Header: Hexagonal Icon + Service Number & Deliverable Count */}
-        <div className="relative z-10 flex items-center justify-between gap-2 mb-3">
+        <div className="relative z-10 flex items-center justify-between gap-2 mb-3 min-w-0">
           <div
             style={{ clipPath: HEX_CLIP }}
-            className="flex items-center justify-center w-9 h-10 p-[1px] bg-gradient-to-b from-[#47f59c]/80 to-[#47f59c]/20 transition-transform duration-300 group-hover:scale-110"
+            className="flex items-center justify-center w-9 h-10 p-[1px] bg-gradient-to-b from-[#47f59c]/80 to-[#47f59c]/20 transition-transform duration-300 group-hover:scale-110 shrink-0"
           >
             <div
               style={{ clipPath: HEX_CLIP }}
@@ -189,7 +188,7 @@ export function ServiceCard({
             </div>
           </div>
 
-          <div className="flex items-center gap-1.5 font-mono text-[10px] tracking-wider uppercase">
+          <div className="flex items-center gap-1.5 font-mono text-[10px] tracking-wider uppercase shrink-0">
             {serviceNumber && (
               <span className="px-1.5 py-0.5 rounded bg-white/[0.04] text-zinc-400">
                 {serviceNumber}
@@ -202,23 +201,23 @@ export function ServiceCard({
           </div>
         </div>
 
-        {/* Service Title & 1-Line Summary */}
-        <h3 className="relative z-10 text-sm sm:text-[15px] font-semibold tracking-tight text-white leading-snug line-clamp-1 group-hover:text-[#7efcc0] transition-colors">
+        {/* Service Title & Wrapped Mobile Summary */}
+        <h3 className="relative z-10 text-[15px] sm:text-base font-semibold tracking-tight text-white leading-snug break-words line-clamp-2 group-hover:text-[#7efcc0] transition-colors">
           {service.title}
         </h3>
 
-        <p className="relative z-10 mt-1 text-xs text-zinc-400 line-clamp-1">
+        <p className="relative z-10 mt-1.5 text-[13px] sm:text-xs leading-relaxed text-zinc-400 break-words line-clamp-2">
           {service.summary}
         </p>
 
         {/* Bottom Preview & Weave Trigger */}
-        <div className="relative z-10 mt-3 pt-2.5 border-t border-white/[0.07] flex items-center justify-between gap-2">
-          <span className="inline-flex items-center gap-1.5 font-mono text-[10px] text-zinc-300 truncate">
+        <div className="relative z-10 mt-auto pt-3 border-t border-white/[0.07] flex items-center justify-between gap-2 min-w-0">
+          <div className="flex items-center gap-1.5 min-w-0 flex-1 font-mono text-[11px] sm:text-[10px] text-zinc-300">
             <span className="w-1.5 h-1.5 rounded-full bg-[#47f59c] shrink-0 shadow-[0_0_6px_#47f59c]" />
             <span className="truncate">{deliverables[0]}</span>
-          </span>
+          </div>
 
-          <span className="shrink-0 font-mono text-[10px] font-medium tracking-wider uppercase text-[#47f59c] opacity-85 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all">
+          <span className="shrink-0 font-mono text-[11px] sm:text-[10px] font-medium tracking-wider uppercase text-[#47f59c] opacity-90 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all">
             Weave →
           </span>
         </div>
@@ -228,7 +227,7 @@ export function ServiceCard({
 }
 
 /**
- * Expanded Interactive Service Spider-Nest Modal
+ * Expanded Interactive Service Spider-Nest Modal (Mobile-Scrollable + Pinned Header)
  */
 export function ServiceSpiderNestModal({
   services = [],
@@ -309,7 +308,7 @@ export function ServiceSpiderNestModal({
       role="dialog"
       aria-modal="true"
       aria-label={`${service.title} deliverables spider nest`}
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 overflow-y-auto"
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-2 sm:p-6"
     >
       {/* Frosted Pitch-Black Backdrop */}
       <div
@@ -319,15 +318,15 @@ export function ServiceSpiderNestModal({
       />
 
       {/* Service Spider-Nest Chamber */}
-      <div className="relative z-10 w-full max-w-5xl my-auto rounded-3xl bg-[#0b0e0d]/95 border border-[#47f59c]/35 shadow-[0_32px_80px_-12px_rgba(0,0,0,0.98),0_0_50px_-12px_rgba(71,245,156,0.28),inset_0_1px_0_0_rgba(255,255,255,0.12)] overflow-hidden">
+      <div className="relative z-10 flex flex-col w-full max-w-5xl max-h-[92dvh] sm:max-h-[90dvh] rounded-2xl sm:rounded-3xl bg-[#0b0e0d]/95 border border-[#47f59c]/35 shadow-[0_32px_80px_-12px_rgba(0,0,0,0.98),0_0_50px_-12px_rgba(71,245,156,0.28),inset_0_1px_0_0_rgba(255,255,255,0.12)] overflow-hidden">
         {/* Top Specular Mint Rim */}
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-x-12 top-0 h-px bg-gradient-to-r from-transparent via-[#47f59c]/70 to-transparent"
         />
 
-        {/* Modal Header */}
-        <div className="p-4 sm:p-6 border-b border-white/[0.07]">
+        {/* Pinned Modal Header */}
+        <div className="shrink-0 p-4 sm:p-6 border-b border-white/[0.07]">
           <div className="flex items-start justify-between gap-3">
             <div className="flex items-start gap-3 sm:gap-3.5 min-w-0">
               <div
@@ -343,7 +342,7 @@ export function ServiceSpiderNestModal({
               </div>
 
               <div className="min-w-0">
-                <div className="flex flex-wrap items-center gap-2">
+                <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
                   <span className="font-mono text-[10px] sm:text-[11px] font-semibold tracking-widest uppercase text-[#47f59c]">
                     Capability {String(activeIndex + 1).padStart(2, "0")} /{" "}
                     {String(services.length).padStart(2, "0")}
@@ -354,7 +353,7 @@ export function ServiceSpiderNestModal({
                   </span>
                 </div>
 
-                <h3 className="text-lg sm:text-2xl font-bold tracking-tight text-white mt-0.5">
+                <h3 className="text-base sm:text-2xl font-bold tracking-tight text-white mt-0.5 leading-snug">
                   {service.title}
                 </h3>
               </div>
@@ -369,10 +368,13 @@ export function ServiceSpiderNestModal({
               <X className="w-4 h-4" />
             </button>
           </div>
+        </div>
 
-          {/* Full-Width Service Brief & Conversion Banner */}
+        {/* Scrollable Modal Content Body */}
+        <div className="flex-1 overflow-y-auto overscroll-contain p-4 sm:p-6 space-y-5 sm:space-y-6">
+          {/* Service Brief & Conversion Banner */}
           {service.summary && (
-            <div className="relative mt-4 rounded-xl bg-gradient-to-r from-[#0f2419]/85 via-[#0c1411]/90 to-[#090c0b]/90 border border-[#47f59c]/25 border-l-2 border-l-[#47f59c] px-3.5 py-3 sm:px-4 sm:py-3.5 shadow-[0_10px_28px_-10px_rgba(71,245,156,0.22),inset_0_1px_0_0_rgba(255,255,255,0.08)] overflow-hidden">
+            <div className="relative rounded-xl bg-gradient-to-r from-[#0f2419]/85 via-[#0c1411]/90 to-[#090c0b]/90 border border-[#47f59c]/25 border-l-2 border-l-[#47f59c] px-3.5 py-3 sm:px-4 sm:py-3.5 shadow-[0_10px_28px_-10px_rgba(71,245,156,0.22),inset_0_1px_0_0_rgba(255,255,255,0.08)] overflow-hidden">
               <div
                 aria-hidden="true"
                 className="pointer-events-none absolute inset-x-6 top-0 h-px bg-gradient-to-r from-[#47f59c]/65 via-[#7efcc0]/25 to-transparent"
@@ -389,7 +391,7 @@ export function ServiceSpiderNestModal({
                     Service Brief
                   </span>
 
-                  <p className="text-xs sm:text-[14px] font-normal tracking-[-0.01em] leading-relaxed text-zinc-100">
+                  <p className="text-[13px] sm:text-[14px] font-normal tracking-[-0.01em] leading-relaxed text-zinc-100">
                     {service.summary}
                   </p>
                 </div>
@@ -397,7 +399,7 @@ export function ServiceSpiderNestModal({
                 <a
                   href="#contact"
                   onClick={onClose}
-                  className="inline-flex items-center justify-center gap-1.5 self-start lg:self-auto shrink-0 px-4 py-2 text-xs font-semibold text-zinc-950 bg-[#47f59c] rounded-full shadow-[0_0_24px_-4px_rgba(71,245,156,0.55)] hover:bg-[#5ef9ab] hover:shadow-[0_0_28px_-2px_rgba(71,245,156,0.75)] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#47f59c]"
+                  className="inline-flex items-center justify-center gap-1.5 w-full sm:w-auto shrink-0 px-4 py-2 text-xs font-semibold text-zinc-950 bg-[#47f59c] rounded-full shadow-[0_0_24px_-4px_rgba(71,245,156,0.55)] hover:bg-[#5ef9ab] hover:shadow-[0_0_28px_-2px_rgba(71,245,156,0.75)] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#47f59c]"
                 >
                   <span>Scope This Build</span>
                   <ArrowUpRight className="w-3.5 h-3.5" />
@@ -405,219 +407,211 @@ export function ServiceSpiderNestModal({
               </div>
             </div>
           )}
-        </div>
 
-        {/* Two-Column Body: Synced Deliverables Breakdown + Interactive Spider-Nest Web */}
-        <div className="grid lg:grid-cols-12 gap-5 sm:gap-6 p-4 sm:p-6">
-          {/* Left Column: Summary & Synced Key Deliverables */}
-          <div className="lg:col-span-5 flex flex-col justify-between space-y-5">
-            <div>
-              <p className="text-sm leading-relaxed text-zinc-300">
-                {service.summary}
-              </p>
-
-              <div className="mt-5">
-                <div className="flex items-center gap-2 mb-3">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#47f59c] shadow-[0_0_8px_#47f59c]" />
-                  <h4 className="font-mono text-[11px] font-semibold tracking-[0.18em] uppercase text-[#47f59c]">
-                    Key Deliverables
-                  </h4>
-                </div>
-
-                <ul className="space-y-2">
-                  {webNodes.map((node) => {
-                    const isLit = hoveredNode === node.index;
-                    return (
-                      <li
-                        key={node.label}
-                        onClick={() => setActiveNode(isLit ? null : node.index)}
-                        onMouseEnter={() => setActiveNode(node.index)}
-                        onMouseLeave={() => setActiveNode(null)}
-                        className={`flex items-center gap-3 p-3 rounded-xl border text-xs sm:text-[13px] transition-all duration-200 cursor-pointer ${
-                          isLit
-                            ? "bg-[#0f2419]/80 border-[#47f59c]/60 text-white shadow-[0_0_20px_-6px_rgba(71,245,156,0.4)]"
-                            : "bg-white/[0.025] border-white/[0.06] text-zinc-300 hover:border-white/[0.14]"
-                        }`}
-                      >
-                        <span
-                          className={`flex items-center justify-center w-5 h-5 rounded-full border shrink-0 transition-transform ${
-                            isLit
-                              ? "bg-[#47f59c] border-[#47f59c] text-zinc-950 scale-110"
-                              : "bg-[#47f59c]/10 border-[#47f59c]/30 text-[#47f59c]"
-                          }`}
-                        >
-                          <Check className="w-3 h-3 stroke-[2.5]" />
-                        </span>
-                        <span className="leading-snug">{node.label}</span>
-                      </li>
-                    );
-                  })}
-                </ul>
+          {/* Two-Column Body: Synced Deliverables List + Interactive Spider-Nest Web */}
+          <div className="grid lg:grid-cols-12 gap-5 sm:gap-6">
+            {/* Left Column: Synced Key Deliverables */}
+            <div className="lg:col-span-5 flex flex-col min-w-0">
+              <div className="flex items-center gap-2 mb-3">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#47f59c] shadow-[0_0_8px_#47f59c]" />
+                <h4 className="font-mono text-[11px] font-semibold tracking-[0.18em] uppercase text-[#47f59c]">
+                  Key Deliverables
+                </h4>
               </div>
-            </div>
-          </div>
 
-          {/* Right Column: Interactive Deliverables Spider-Nest Web (Explicit Height Fixed for Mobile) */}
-          <div className="lg:col-span-7 flex flex-col">
-            <div className="flex items-center justify-between gap-2 mb-2.5">
-              <span className="font-mono text-[11px] font-semibold tracking-[0.14em] uppercase text-zinc-400">
-                Deliverables Constellation
-              </span>
-              <span className="font-mono text-[10px] text-[#47f59c] shrink-0">
-                <span className="sm:hidden">Tap to trace node connections</span>
-                <span className="hidden sm:inline">
-                  Hover to trace node connections
-                </span>
-              </span>
-            </div>
-
-            <div className="relative w-full h-[22rem] sm:h-[25rem] min-h-[22rem] shrink-0 lg:flex-1 rounded-2xl bg-[#060807] border border-[#47f59c]/20 shadow-[inset_0_0_40px_rgba(71,245,156,0.06)] overflow-hidden">
-              {/* Radial Center Glow */}
-              <div
-                aria-hidden="true"
-                className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 rounded-full bg-[#47f59c]/[0.15] blur-2xl"
-              />
-
-              {/* Spider-Web SVG Silk Geometry */}
-              <svg
-                aria-hidden="true"
-                viewBox="0 0 100 100"
-                preserveAspectRatio="none"
-                className="pointer-events-none absolute inset-0 w-full h-full"
-              >
-                <ellipse
-                  cx="50"
-                  cy="50"
-                  rx="15"
-                  ry="14"
-                  fill="none"
-                  stroke="rgba(71, 245, 156, 0.16)"
-                  strokeWidth="0.35"
-                  strokeDasharray="1.5 1.5"
-                />
-                <ellipse
-                  cx="50"
-                  cy="50"
-                  rx="28"
-                  ry="30"
-                  fill="none"
-                  stroke="rgba(255, 255, 255, 0.08)"
-                  strokeWidth="0.35"
-                />
-
-                {innerPolygonPoints && (
-                  <polygon
-                    points={innerPolygonPoints}
-                    fill="rgba(71, 245, 156, 0.035)"
-                    stroke="rgba(71, 245, 156, 0.3)"
-                    strokeWidth="0.4"
-                  />
-                )}
-                {outerPolygonPoints && (
-                  <polygon
-                    points={outerPolygonPoints}
-                    fill="none"
-                    stroke="rgba(71, 245, 156, 0.22)"
-                    strokeWidth="0.38"
-                    strokeDasharray="2 1.2"
-                  />
-                )}
-
-                {crossLinks.map((link) => {
-                  const isLit =
-                    hoveredNode === link.from.index ||
-                    hoveredNode === link.to.index;
-                  return (
-                    <line
-                      key={link.key}
-                      x1={link.from.x}
-                      y1={link.from.y}
-                      x2={link.to.x}
-                      y2={link.to.y}
-                      stroke={
-                        isLit
-                          ? "rgba(71, 245, 156, 0.75)"
-                          : "rgba(255, 255, 255, 0.11)"
-                      }
-                      strokeWidth={isLit ? "0.55" : "0.32"}
-                      className="transition-all duration-300"
-                    />
-                  );
-                })}
-
+              <ul className="space-y-2">
                 {webNodes.map((node) => {
                   const isLit = hoveredNode === node.index;
                   return (
-                    <line
-                      key={`spoke-${node.label}`}
-                      x1="50"
-                      y1="50"
-                      x2={node.x}
-                      y2={node.y}
-                      stroke={
+                    <li
+                      key={node.label}
+                      onClick={() => setActiveNode(isLit ? null : node.index)}
+                      onMouseEnter={() => setActiveNode(node.index)}
+                      onMouseLeave={() => setActiveNode(null)}
+                      className={`flex items-center gap-3 p-3 rounded-xl border text-[13px] transition-all duration-200 cursor-pointer ${
                         isLit
-                          ? "#47f59c"
-                          : node.isInner
-                            ? "rgba(71, 245, 156, 0.48)"
-                            : "rgba(71, 245, 156, 0.28)"
-                      }
-                      strokeWidth={isLit ? "0.75" : "0.42"}
-                      className="transition-all duration-300"
-                    />
+                          ? "bg-[#0f2419]/80 border-[#47f59c]/60 text-white shadow-[0_0_20px_-6px_rgba(71,245,156,0.4)]"
+                          : "bg-white/[0.025] border-white/[0.06] text-zinc-300 hover:border-white/[0.14]"
+                      }`}
+                    >
+                      <span
+                        className={`flex items-center justify-center w-5 h-5 rounded-full border shrink-0 transition-transform ${
+                          isLit
+                            ? "bg-[#47f59c] border-[#47f59c] text-zinc-950 scale-110"
+                            : "bg-[#47f59c]/10 border-[#47f59c]/30 text-[#47f59c]"
+                        }`}
+                      >
+                        <Check className="w-3 h-3 stroke-[2.5]" />
+                      </span>
+                      <span className="leading-snug">{node.label}</span>
+                    </li>
                   );
                 })}
-              </svg>
+              </ul>
+            </div>
 
-              {/* Central Service Core Hub */}
-              <div
-                aria-hidden="true"
-                className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 flex items-center justify-center w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-[#0b120e] border border-[#47f59c]/65 text-[#47f59c] shadow-[0_0_28px_rgba(71,245,156,0.55),inset_0_1px_0_rgba(255,255,255,0.25)]"
-              >
-                <span className="absolute inset-0 rounded-full border border-[#47f59c]/40 animate-ping opacity-40 motion-reduce:hidden" />
-                <Icon className="w-4 h-4 sm:w-5 sm:h-5 relative z-10" />
+            {/* Right Column: Interactive Deliverables Spider-Nest Web */}
+            <div className="lg:col-span-7 flex flex-col min-w-0">
+              <div className="flex items-center justify-between gap-2 mb-2.5">
+                <span className="font-mono text-[11px] font-semibold tracking-[0.14em] uppercase text-zinc-400">
+                  Deliverables Constellation
+                </span>
+                <span className="font-mono text-[10px] text-[#47f59c] shrink-0">
+                  <span className="sm:hidden">Tap node to trace</span>
+                  <span className="hidden sm:inline">
+                    Hover to trace node connections
+                  </span>
+                </span>
               </div>
 
-              {/* Deliverable Vertex Nodes Placed on Every Point of the Nest */}
-              {webNodes.map((node) => {
-                const isLit = hoveredNode === node.index;
-                return (
-                  <button
-                    key={node.label}
-                    type="button"
-                    style={{
-                      left: `${node.x}%`,
-                      top: `${node.y}%`,
-                    }}
-                    onClick={() => setActiveNode(isLit ? null : node.index)}
-                    onMouseEnter={() => setActiveNode(node.index)}
-                    onMouseLeave={() => setActiveNode(null)}
-                    onFocus={() => setActiveNode(node.index)}
-                    onBlur={() => setActiveNode(null)}
-                    className={`absolute -translate-x-1/2 -translate-y-1/2 z-20 flex items-center gap-1 sm:gap-1.5 max-w-[118px] sm:max-w-[180px] px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-full font-mono text-[9px] sm:text-[11px] font-medium border backdrop-blur-xl transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#47f59c] ${
-                      isLit
-                        ? "z-30 scale-105 bg-[#0f2419]/95 text-white border-[#47f59c] shadow-[0_0_22px_rgba(71,245,156,0.6),inset_0_1px_0_rgba(255,255,255,0.3)]"
-                        : "bg-[#121619]/95 text-zinc-100 border-[#47f59c]/35 shadow-[0_8px_20px_rgba(0,0,0,0.85)] hover:border-[#47f59c]"
-                    }`}
-                  >
-                    <span
-                      aria-hidden="true"
-                      className={`w-1.5 h-1.5 rounded-full shrink-0 ${
-                        isLit
-                          ? "bg-[#47f59c] scale-125 shadow-[0_0_8px_#47f59c]"
-                          : "bg-[#47f59c]/85"
-                      }`}
+              <div className="relative w-full h-[20rem] sm:h-[24rem] shrink-0 lg:flex-1 rounded-2xl bg-[#060807] border border-[#47f59c]/20 shadow-[inset_0_0_40px_rgba(71,245,156,0.06)] overflow-hidden">
+                {/* Radial Center Glow */}
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-36 sm:w-40 h-36 sm:h-40 rounded-full bg-[#47f59c]/[0.15] blur-2xl"
+                />
+
+                {/* Spider-Web SVG Silk Geometry */}
+                <svg
+                  aria-hidden="true"
+                  viewBox="0 0 100 100"
+                  preserveAspectRatio="none"
+                  className="pointer-events-none absolute inset-0 w-full h-full"
+                >
+                  <ellipse
+                    cx="50"
+                    cy="50"
+                    rx="15"
+                    ry="14"
+                    fill="none"
+                    stroke="rgba(71, 245, 156, 0.16)"
+                    strokeWidth="0.35"
+                    strokeDasharray="1.5 1.5"
+                  />
+                  <ellipse
+                    cx="50"
+                    cy="50"
+                    rx="27"
+                    ry="29"
+                    fill="none"
+                    stroke="rgba(255, 255, 255, 0.08)"
+                    strokeWidth="0.35"
+                  />
+
+                  {innerPolygonPoints && (
+                    <polygon
+                      points={innerPolygonPoints}
+                      fill="rgba(71, 245, 156, 0.035)"
+                      stroke="rgba(71, 245, 156, 0.3)"
+                      strokeWidth="0.4"
                     />
-                    <span className="truncate">{node.label}</span>
-                  </button>
-                );
-              })}
+                  )}
+                  {outerPolygonPoints && (
+                    <polygon
+                      points={outerPolygonPoints}
+                      fill="none"
+                      stroke="rgba(71, 245, 156, 0.22)"
+                      strokeWidth="0.38"
+                      strokeDasharray="2 1.2"
+                    />
+                  )}
+
+                  {crossLinks.map((link) => {
+                    const isLit =
+                      hoveredNode === link.from.index ||
+                      hoveredNode === link.to.index;
+                    return (
+                      <line
+                        key={link.key}
+                        x1={link.from.x}
+                        y1={link.from.y}
+                        x2={link.to.x}
+                        y2={link.to.y}
+                        stroke={
+                          isLit
+                            ? "rgba(71, 245, 156, 0.75)"
+                            : "rgba(255, 255, 255, 0.11)"
+                        }
+                        strokeWidth={isLit ? "0.55" : "0.32"}
+                        className="transition-all duration-300"
+                      />
+                    );
+                  })}
+
+                  {webNodes.map((node) => {
+                    const isLit = hoveredNode === node.index;
+                    return (
+                      <line
+                        key={`spoke-${node.label}`}
+                        x1="50"
+                        y1="50"
+                        x2={node.x}
+                        y2={node.y}
+                        stroke={
+                          isLit
+                            ? "#47f59c"
+                            : node.isInner
+                              ? "rgba(71, 245, 156, 0.48)"
+                              : "rgba(71, 245, 156, 0.28)"
+                        }
+                        strokeWidth={isLit ? "0.75" : "0.42"}
+                        className="transition-all duration-300"
+                      />
+                    );
+                  })}
+                </svg>
+
+                {/* Central Service Core Hub */}
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-[#0b120e] border border-[#47f59c]/65 text-[#47f59c] shadow-[0_0_28px_rgba(71,245,156,0.55),inset_0_1px_0_rgba(255,255,255,0.25)]"
+                >
+                  <span className="absolute inset-0 rounded-full border border-[#47f59c]/40 animate-ping opacity-40 motion-reduce:hidden" />
+                  <Icon className="w-4 h-4 sm:w-5 sm:h-5 relative z-10" />
+                </div>
+
+                {/* Deliverable Vertex Nodes */}
+                {webNodes.map((node) => {
+                  const isLit = hoveredNode === node.index;
+                  return (
+                    <button
+                      key={node.label}
+                      type="button"
+                      style={{
+                        left: `${node.x}%`,
+                        top: `${node.y}%`,
+                      }}
+                      onClick={() => setActiveNode(isLit ? null : node.index)}
+                      onMouseEnter={() => setActiveNode(node.index)}
+                      onMouseLeave={() => setActiveNode(null)}
+                      onFocus={() => setActiveNode(node.index)}
+                      onBlur={() => setActiveNode(null)}
+                      className={`absolute -translate-x-1/2 -translate-y-1/2 z-20 flex items-center gap-1 sm:gap-1.5 max-w-[104px] sm:max-w-[180px] px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-full font-mono text-[9px] sm:text-[11px] font-medium border backdrop-blur-xl transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#47f59c] ${
+                        isLit
+                          ? "z-30 scale-105 bg-[#0f2419]/95 text-white border-[#47f59c] shadow-[0_0_22px_rgba(71,245,156,0.6),inset_0_1px_0_rgba(255,255,255,0.3)]"
+                          : "bg-[#121619]/95 text-zinc-100 border-[#47f59c]/35 shadow-[0_8px_20px_rgba(0,0,0,0.85)] hover:border-[#47f59c]"
+                      }`}
+                    >
+                      <span
+                        aria-hidden="true"
+                        className={`w-1.5 h-1.5 rounded-full shrink-0 ${
+                          isLit
+                            ? "bg-[#47f59c] scale-125 shadow-[0_0_8px_#47f59c]"
+                            : "bg-[#47f59c]/85"
+                        }`}
+                      />
+                      <span className="truncate">{node.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Footer: Quick Service Orbit Switcher */}
-        <div className="flex flex-wrap items-center justify-between gap-3 px-4 sm:px-5 py-3.5 sm:py-4 bg-white/[0.02] border-t border-white/[0.07]">
-          <div className="flex items-center gap-1.5">
+        {/* Pinned Footer: Quick Service Orbit Switcher */}
+        <div className="shrink-0 flex items-center justify-between gap-3 px-4 sm:px-5 py-3 sm:py-4 bg-white/[0.02] border-t border-white/[0.07]">
+          <div className="flex items-center gap-1.5 shrink-0">
             <button
               type="button"
               onClick={() =>
@@ -642,17 +636,17 @@ export function ServiceSpiderNestModal({
             </button>
             <span className="ml-2 hidden sm:inline-flex items-center gap-1.5 font-mono text-[11px] text-zinc-400">
               <Sparkles className="w-3 h-3 text-[#47f59c]" />
-              Use ← / → keys to switch engineering domains
+              Use ← / → keys to switch domains
             </span>
           </div>
 
-          <div className="flex flex-wrap items-center gap-1.5">
+          <div className="flex items-center gap-1.5 overflow-x-auto py-0.5">
             {services.map((item, idx) => (
               <button
                 key={item.id || item.title}
                 type="button"
                 onClick={() => onSelectIndex?.(idx)}
-                className={`px-2.5 py-1 rounded-full font-mono text-[11px] transition-all ${
+                className={`shrink-0 px-2.5 py-1 rounded-full font-mono text-[11px] transition-all ${
                   idx === activeIndex
                     ? "bg-[#47f59c] text-zinc-950 font-semibold shadow-[0_0_16px_rgba(71,245,156,0.45)]"
                     : "bg-white/[0.04] text-zinc-400 border border-white/[0.08] hover:text-white"
