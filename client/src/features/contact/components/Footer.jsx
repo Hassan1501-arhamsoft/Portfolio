@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { ArrowUp, ArrowUpRight, Radio } from 'lucide-react';
+import { ArrowUp, ArrowUpRight, Check, Copy, Radio } from 'lucide-react';
 import {
   GitHubIcon,
   LinkedInIcon,
@@ -10,6 +10,8 @@ import { ParticleCanvas } from '../../../shared/components/ParticleCanvas';
 const HEX_CLIP =
   'polygon(50% 0%, 95% 25%, 95% 75%, 50% 100%, 5% 75%, 5% 25%)';
 
+const CONTACT_EMAIL = 'hassan427726@gmail.com';
+
 function SocialFooterIcon({ id, className = 'w-4 h-4' }) {
   if (id === 'github') return <GitHubIcon className={className} />;
   if (id === 'linkedin') return <LinkedInIcon className={className} />;
@@ -19,6 +21,8 @@ function SocialFooterIcon({ id, className = 'w-4 h-4' }) {
 export function Footer() {
   const deckRef = useRef(null);
   const [showScrollTop, setShowScrollTop] = useState(false);
+  const [avatarError, setAvatarError] = useState(false);
+  const [copiedEmail, setCopiedEmail] = useState(false);
   const currentYear = new Date().getFullYear();
 
   useEffect(() => {
@@ -50,6 +54,16 @@ export function Footer() {
     });
   };
 
+  const handleCopyEmail = async () => {
+    try {
+      await navigator.clipboard.writeText(CONTACT_EMAIL);
+      setCopiedEmail(true);
+      window.setTimeout(() => setCopiedEmail(false), 2200);
+    } catch {
+      window.location.href = `mailto:${CONTACT_EMAIL}`;
+    }
+  };
+
   return (
     <>
       <footer className="relative overflow-hidden bg-[#060708] border-t border-white/[0.07]">
@@ -79,7 +93,8 @@ export function Footer() {
           className="pointer-events-none absolute inset-0 bg-[radial-gradient(rgba(71,245,156,0.12)_1px,transparent_1px)] [background-size:24px_24px] [mask-image:radial-gradient(ellipse_80%_75%_at_50%_60%,#000_30%,transparent_100%)]"
         />
 
-        <div className="relative z-10 max-w-6xl px-6 py-14 lg:py-16 mx-auto">
+        {/* Extra mobile bottom padding (pb-24) prevents the floating Top button from overlapping social pills */}
+        <div className="relative z-10 max-w-6xl px-6 pt-14 pb-24 sm:py-14 lg:py-16 mx-auto">
           {/* Main Obsidian-Mint Command Deck */}
           <div
             ref={deckRef}
@@ -126,9 +141,18 @@ export function Footer() {
                   >
                     <span
                       style={{ clipPath: HEX_CLIP }}
-                      className="flex items-center justify-center w-full h-full bg-[#090d0b] font-mono text-sm font-bold tracking-wider text-[#47f59c]"
+                      className="flex items-center justify-center w-full h-full bg-[#090d0b] font-mono text-sm font-bold tracking-wider text-[#47f59c] overflow-hidden"
                     >
-                      <img src={BRAND.avatarUrl} alt="Brand Logo" />
+                      {BRAND.avatarUrl && !avatarError ? (
+                        <img
+                          src={BRAND.avatarUrl}
+                          alt={BRAND.name}
+                          onError={() => setAvatarError(true)}
+                          className="w-full h-full object-cover object-top"
+                        />
+                      ) : (
+                        BRAND.monogram
+                      )}
                     </span>
                   </div>
                 </div>
@@ -151,7 +175,7 @@ export function Footer() {
 
               {/* Tethered Section Waypoints */}
               <nav aria-label="Footer navigation" className="relative">
-                {/* Connecting Silk Filament Behind Waypoint Pills (Desktop) */}
+                {/* Connecting Node Link Line Behind Waypoint Pills (Desktop) */}
                 <div
                   aria-hidden="true"
                   className="hidden sm:block pointer-events-none absolute inset-x-4 top-1/2 -translate-y-1/2 h-px bg-gradient-to-r from-transparent via-[#47f59c]/25 to-transparent"
@@ -174,8 +198,8 @@ export function Footer() {
             </div>
           </div>
 
-          {/* Bottom Telemetry & Social Bar */}
-          <div className="flex flex-col gap-4 pt-8 mt-8 border-t border-white/[0.06] sm:flex-row sm:items-center sm:justify-between">
+          {/* Bottom Telemetry & Direct Contact Bar */}
+          <div className="flex flex-col gap-4 pt-8 mt-8 border-t border-white/[0.06] md:flex-row md:items-center md:justify-between">
             <div className="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-xs text-zinc-500">
               <span>
                 © {currentYear}{' '}
@@ -186,11 +210,31 @@ export function Footer() {
               <span className="text-zinc-700">·</span>
               <span className="inline-flex items-center gap-1.5 text-zinc-400">
                 <Radio className="w-3 h-3 text-[#47f59c]" />
-                Engineered with love 💚
+                Engineered with React, Vite & Tailwind CSS
               </span>
             </div>
 
-            <div className="flex items-center gap-2.5">
+            <div className="flex flex-wrap items-center gap-2.5">
+              {/* One-Click Email Copy Pill */}
+              <button
+                type="button"
+                onClick={handleCopyEmail}
+                aria-label={`Copy email address ${CONTACT_EMAIL}`}
+                className="group/email inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full font-mono text-xs text-zinc-300 bg-white/[0.03] border border-white/[0.09] hover:text-white hover:bg-[#0f2419]/80 hover:border-[#47f59c]/45 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#47f59c]"
+              >
+                {copiedEmail ? (
+                  <>
+                    <Check className="w-3.5 h-3.5 text-[#47f59c]" />
+                    <span className="text-[#47f59c]">Copied Email</span>
+                  </>
+                ) : (
+                  <>
+                    <Copy className="w-3.5 h-3.5 text-[#47f59c]" />
+                    <span>{CONTACT_EMAIL}</span>
+                  </>
+                )}
+              </button>
+
               {SOCIAL_LINKS.map((social) => (
                 <a
                   key={social.id}
@@ -219,7 +263,7 @@ export function Footer() {
         tabIndex={showScrollTop ? 0 : -1}
         aria-label="Scroll smoothly back to top"
         title="Return to top"
-        className={`group/top fixed bottom-6 right-5 sm:bottom-8 sm:right-8 z-40 inline-flex items-center gap-2 px-3.5 py-2.5 rounded-full font-mono text-[11px] font-semibold tracking-wider uppercase text-zinc-200 bg-[#0b0e0d]/90 backdrop-blur-xl border border-[#47f59c]/40 shadow-[0_12px_32px_rgba(0,0,0,0.85),0_0_24px_-6px_rgba(71,245,156,0.45)] hover:text-zinc-950 hover:bg-[#47f59c] hover:border-[#47f59c] hover:shadow-[0_0_32px_-2px_rgba(71,245,156,0.8)] transition-all duration-300 motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#47f59c] focus-visible:ring-offset-2 focus-visible:ring-offset-[#060708] ${
+        className={`group/top fixed bottom-5 right-4 sm:bottom-8 sm:right-8 z-40 inline-flex items-center gap-2 px-3.5 py-2.5 rounded-full font-mono text-[11px] font-semibold tracking-wider uppercase text-zinc-200 bg-[#0b0e0d]/90 backdrop-blur-xl border border-[#47f59c]/40 shadow-[0_12px_32px_rgba(0,0,0,0.85),0_0_24px_-6px_rgba(71,245,156,0.45)] hover:text-zinc-950 hover:bg-[#47f59c] hover:border-[#47f59c] hover:shadow-[0_0_32px_-2px_rgba(71,245,156,0.8)] transition-all duration-300 motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#47f59c] focus-visible:ring-offset-2 focus-visible:ring-offset-[#060708] ${
           showScrollTop
             ? 'opacity-100 translate-y-0 pointer-events-auto'
             : 'opacity-0 translate-y-4 pointer-events-none'

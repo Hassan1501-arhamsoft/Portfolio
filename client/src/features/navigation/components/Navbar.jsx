@@ -1,9 +1,7 @@
-import { useState, useMemo, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { Download, Menu } from 'lucide-react';
-import { useScrollSpy } from '../../../shared/hooks/useScrollSpy';
 import { BRAND, NAV_ITEMS, RESUME_URL } from '../data/nav.data';
 import { MobileDrawer } from './MobileDrawer';
-import { ParticleCanvas } from '../../../shared/components/ParticleCanvas';
 
 const HEX_CLIP =
   'polygon(50% 0%, 95% 25%, 95% 75%, 50% 100%, 5% 75%, 5% 25%)';
@@ -11,33 +9,34 @@ const HEX_CLIP =
 export function Navbar() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [imgError, setImgError] = useState(false);
-
-  const sectionIds = useMemo(() => NAV_ITEMS.map((item) => item.id), []);
-  const spyActiveId = useScrollSpy(sectionIds);
+  const [isScrolled, setIsScrolled] = useState(false);
 
   const [activeNavId, setActiveNavId] = useState(() => NAV_ITEMS[0]?.id || '');
   const clickLockRef = useRef(false);
   const clickTimerRef = useRef(null);
 
-  // Refs for iPhone Liquid Glass sliding segmented pill
+  // Refs for Liquid Glass sliding segmented pill
   const navListRef = useRef(null);
   const itemRefs = useRef({});
-  const [activePill, setActivePill] = useState({ left: 0, width: 0, ready: false });
-  const [hoverPill, setHoverPill] = useState({ left: 0, width: 0, visible: false });
+  const [activePill, setActivePill] = useState({
+    left: 0,
+    width: 0,
+    ready: false,
+  });
+  const [hoverPill, setHoverPill] = useState({
+    left: 0,
+    width: 0,
+    visible: false,
+  });
 
-  // Sync with external useScrollSpy when not mid-click-scroll
-  useEffect(() => {
-    if (!clickLockRef.current && spyActiveId) {
-      setActiveNavId(spyActiveId);
-    }
-  }, [spyActiveId]);
-
-  // Bulletproof scroll detection (works with window OR custom scroll containers)
+  // Single unified RAF scroll listener for active section + floating elevation
   useEffect(() => {
     let rafPending = false;
 
-    const updateSectionFromViewport = () => {
+    const updateFromViewport = () => {
       rafPending = false;
+      setIsScrolled(window.scrollY > 24);
+
       if (clickLockRef.current) return;
 
       const doc = document.documentElement;
@@ -72,11 +71,11 @@ export function Navbar() {
     const handleAnyScroll = () => {
       if (!rafPending) {
         rafPending = true;
-        window.requestAnimationFrame(updateSectionFromViewport);
+        window.requestAnimationFrame(updateFromViewport);
       }
     };
 
-    updateSectionFromViewport();
+    updateFromViewport();
     window.addEventListener('scroll', handleAnyScroll, {
       passive: true,
       capture: true,
@@ -88,9 +87,9 @@ export function Navbar() {
     };
   }, []);
 
-  const currentActiveId = activeNavId || spyActiveId || NAV_ITEMS[0]?.id;
+  const currentActiveId = activeNavId || NAV_ITEMS[0]?.id;
 
-  // Measure exact coordinates relative to the <ul> track (avoids <li className="relative"> offsetParent trap)
+  // Measure exact coordinates relative to the <ul> track
   const measureActivePill = useCallback(() => {
     const listEl = navListRef.current;
     const activeEl = itemRefs.current[currentActiveId];
@@ -134,7 +133,7 @@ export function Navbar() {
     }, 900);
   };
 
-  const handleItemMouseEnter = (id) => {
+  const showPreviewPill = (id) => {
     const listEl = navListRef.current;
     const el = itemRefs.current[id];
     if (!listEl || !el) return;
@@ -149,26 +148,21 @@ export function Navbar() {
     });
   };
 
-  const handleListMouseLeave = () => {
+  const hidePreviewPill = () => {
     setHoverPill((prev) => ({ ...prev, visible: false }));
   };
 
   return (
     <>
       <header className="sticky top-4 z-40 w-full px-4 sm:px-6 pointer-events-none">
-         <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0 opacity-65 [mask-image:radial-gradient(ellipse_90%_80%_at_50%_45%,#000_55%,transparent_100%)]"
-          >
-            <ParticleCanvas linkDistance={140} mouseRadius={200} />
-          </div>
         <nav
           aria-label="Primary navigation"
-          className="pointer-events-auto relative overflow-hidden flex items-center justify-between h-16 max-w-6xl pl-3 pr-2.5 sm:pl-4 sm:pr-2.5 mx-auto rounded-full bg-[#0b0e0d]/85 backdrop-blur-2xl border border-white/[0.08] shadow-[0_24px_48px_-12px_rgba(0,0,0,0.95),inset_0_1px_0_0_rgba(255,255,255,0.08)] transition-all duration-300"
+          className={`pointer-events-auto relative overflow-hidden flex items-center justify-between h-16 max-w-6xl pl-3 pr-2.5 sm:pl-4 sm:pr-2.5 mx-auto rounded-full backdrop-blur-2xl border transition-all duration-300 ${
+            isScrolled
+              ? 'bg-[#080b0a]/95 border-[#47f59c]/25 shadow-[0_24px_48px_-12px_rgba(0,0,0,0.98),0_0_28px_-10px_rgba(71,245,156,0.22),inset_0_1px_0_0_rgba(255,255,255,0.1)]'
+              : 'bg-[#0b0e0d]/85 border-white/[0.08] shadow-[0_24px_48px_-12px_rgba(0,0,0,0.95),inset_0_1px_0_0_rgba(255,255,255,0.08)]'
+          }`}
         >
-          {/* Ambient Constellation Layer */}
-         
-
           {/* Left-Side Subtle Mint Dot Matrix */}
           <div
             aria-hidden="true"
@@ -232,11 +226,12 @@ export function Navbar() {
             </div>
           </a>
 
-          {/* Center Navigation: iPhone Liquid Glass Segmented Capsule */}
+          {/* Center Navigation: Liquid Glass Segmented Capsule (lg+ to prevent tablet squeezing) */}
           <ul
             ref={navListRef}
-            onMouseLeave={handleListMouseLeave}
-            className="relative z-10 hidden md:flex items-center gap-0.5 p-1 rounded-full bg-white/[0.025] backdrop-blur-xl border border-white/[0.08] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.08),0_8px_24px_-8px_rgba(0,0,0,0.8)]"
+            onMouseLeave={hidePreviewPill}
+            onBlur={hidePreviewPill}
+            className="relative z-10 hidden lg:flex items-center gap-0.5 p-1 rounded-full bg-white/[0.025] backdrop-blur-xl border border-white/[0.08] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.08),0_8px_24px_-8px_rgba(0,0,0,0.8)]"
           >
             {/* Outer Track Subtle Emerald Rim Glow */}
             <div
@@ -244,7 +239,7 @@ export function Navbar() {
               className="pointer-events-none absolute -inset-px rounded-full border border-[#47f59c]/25 [mask-image:linear-gradient(to_right,#000_0%,transparent_48%)]"
             />
 
-            {/* Secondary Frosted Hover Pill */}
+            {/* Secondary Frosted Hover / Focus Pill */}
             <div
               aria-hidden="true"
               style={{
@@ -257,7 +252,7 @@ export function Navbar() {
               className="pointer-events-none absolute top-1 bottom-1 left-0 rounded-full bg-white/[0.06] border border-white/[0.08] motion-reduce:!transition-none"
             />
 
-            {/* Primary iPhone Liquid Glass Active Capsule */}
+            {/* Primary Liquid Glass Active Capsule */}
             {activePill.ready && (
               <div
                 aria-hidden="true"
@@ -269,7 +264,7 @@ export function Navbar() {
                 }}
                 className="pointer-events-none absolute top-1 bottom-1 left-0 rounded-full bg-gradient-to-b from-[#47f59c]/[0.24] via-[#47f59c]/[0.12] to-[#10b981]/[0.18] backdrop-blur-md border border-[#47f59c]/55 shadow-[inset_0_1px_1px_rgba(255,255,255,0.38),inset_0_-1px_1px_rgba(71,245,156,0.28),0_0_22px_-2px_rgba(71,245,156,0.38)] motion-reduce:!transition-none"
               >
-                {/* Top Curved iOS Glass Specular Glare */}
+                {/* Top Curved Glass Specular Glare */}
                 <span className="block mx-auto mt-[1px] w-3/5 h-[1.5px] rounded-full bg-gradient-to-r from-transparent via-white/60 to-transparent" />
               </div>
             )}
@@ -284,9 +279,10 @@ export function Navbar() {
                     }}
                     href={item.href}
                     onClick={() => handleNavClick(item.id)}
-                    onMouseEnter={() => handleItemMouseEnter(item.id)}
+                    onMouseEnter={() => showPreviewPill(item.id)}
+                    onFocus={() => showPreviewPill(item.id)}
                     aria-current={isActive ? 'page' : undefined}
-                    className={`relative inline-flex items-center justify-center px-3 lg:px-3.5 py-1.5 text-[13px] font-medium rounded-full transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#47f59c]/70 ${
+                    className={`relative inline-flex items-center justify-center px-3.5 py-1.5 text-[13px] font-medium rounded-full transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#47f59c]/70 ${
                       isActive
                         ? 'text-[#7efcc0] font-semibold drop-shadow-[0_0_10px_rgba(71,245,156,0.35)]'
                         : 'text-zinc-300 hover:text-white'
@@ -299,7 +295,7 @@ export function Navbar() {
             })}
           </ul>
 
-          {/* Right Action: Mint Pill CTA with White Circular Icon Badge + Mobile Trigger */}
+          {/* Right Action: Mint Pill CTA + Mobile/Tablet Drawer Trigger */}
           <div className="relative z-10 flex items-center gap-2 shrink-0">
             <a
               href={RESUME_URL}
@@ -322,7 +318,7 @@ export function Navbar() {
               aria-expanded={drawerOpen}
               aria-controls="mobile-nav-drawer"
               aria-label="Open navigation menu"
-              className="group p-2.5 rounded-full text-zinc-200 bg-white/[0.06] border border-white/[0.08] hover:text-[#47f59c] hover:border-[#47f59c]/40 active:scale-95 transition-all duration-200 md:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#47f59c]"
+              className="group p-2.5 rounded-full text-zinc-200 bg-white/[0.06] border border-white/[0.08] hover:text-[#47f59c] hover:border-[#47f59c]/40 active:scale-95 transition-all duration-200 lg:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#47f59c]"
             >
               <Menu className="w-4 h-4 transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:rotate-90" />
             </button>
