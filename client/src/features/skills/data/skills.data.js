@@ -4,7 +4,7 @@ export const SKILL_CATEGORIES = [
     title: 'AI & Retrieval Pipelines',
     icon: 'bot',
     description:
-      'Production LLM integrations, hybrid search architectures, and guarded streaming responses.',
+  'Architecting hallucination-resistant RAG pipelines that fuse hybrid vector-keyword retrieval, cross-encoder re-ranking, and ABAC guardrails into real-time token streams.',
     skills: [
       'MongoDB Atlas Vector Search',
       'Hybrid Search & RRF',
@@ -22,7 +22,7 @@ export const SKILL_CATEGORIES = [
     title: 'Backend & Data Engineering',
     icon: 'server',
     description:
-      'RESTful APIs, relational and document schemas, authentication, and automated test suites.',
+  'Designing fault-tolerant Node.js APIs, normalized SQL and document schemas, and hardened JWT authentication backed by automated integration test suites.',
     skills: [
       'Node.js',
       'Express.js',
@@ -39,7 +39,7 @@ export const SKILL_CATEGORIES = [
     title: 'Frontend Architecture',
     icon: 'layout',
     description:
-      'Component-driven interfaces, predictable state management, and accessible responsive layouts.',
+  'Engineering responsive React applications and state-driven dashboards powered by low-latency WebSockets, peer-to-peer WebRTC media, and modular UI architecture.',
     skills: [
       'React.js',
       'JavaScript (ES6+)',
@@ -55,7 +55,7 @@ export const SKILL_CATEGORIES = [
     title: 'IoT & Embedded Systems',
     icon: 'cpu',
     description:
-      'Microcontroller firmware, sensor-actuator integration, and real-time hardware-to-cloud telemetry.',
+  'Shipping zero-downtime cloud deployments alongside microcontroller hardware systems that stream live sensor and RFID telemetry into full-stack web dashboards.',
     skills: [
       'ESP32 & Arduino',
       'Embedded C / C++',

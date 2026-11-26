@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { FolderGit2, Layers } from 'lucide-react';
 import { SectionHeader } from '../../../shared/components/SectionHeader';
-import { PROJECTS } from '../data/projects.data';
+import { PROJECTS, PROJECT_CATEGORIES } from '../data/projects.data';
 import { ProjectCard, ProjectSpiderNestModal } from './ProjectCard';
+import { ProjectFilter } from './ProjectFilter';
 import { ParticleCanvas } from '../../../shared/components/ParticleCanvas';
 
 export function ProjectsSection() {
@@ -12,6 +13,7 @@ export function ProjectsSection() {
   const hubNodeRefs = useRef([]);
   const pulseDotRefs = useRef([]);
 
+  const [activeCategory, setActiveCategory] = useState('All');
   const [selectedIndex, setSelectedIndex] = useState(null);
   const [hoveredIndex, setHoveredIndex] = useState(null);
 
@@ -20,16 +22,44 @@ export function ProjectsSection() {
     isPausedRef.current = hoveredIndex !== null || selectedIndex !== null;
   }, [hoveredIndex, selectedIndex]);
 
-  const totalUniqueTechCount = useMemo(() => {
-    const unique = new Set();
-    PROJECTS.forEach((p) => p.stack?.forEach((t) => unique.add(t)));
-    return unique.size;
+  // Compute badge counts per category
+  const categoryCounts = useMemo(() => {
+    const counts = { All: PROJECTS.length };
+    PROJECT_CATEGORIES.forEach((cat) => {
+      if (cat !== 'All') {
+        counts[cat] = PROJECTS.filter((p) => p.category === cat).length;
+      }
+    });
+    return counts;
   }, []);
 
-  // Smooth 60fps Orbital Engine: moves project pods + connected SVG tether lines in lockstep
+  // Active filtered project list
+  const filteredProjects = useMemo(() => {
+    if (activeCategory === 'All') return PROJECTS;
+    return PROJECTS.filter((project) => project.category === activeCategory);
+  }, [activeCategory]);
+
+  // Dynamic unique tech count for the currently visible builds
+  const visibleUniqueTechCount = useMemo(() => {
+    const unique = new Set();
+    filteredProjects.forEach((p) => p.stack?.forEach((t) => unique.add(t)));
+    return unique.size;
+  }, [filteredProjects]);
+
+  const handleSelectCategory = (category) => {
+    if (category === activeCategory) return;
+    setSelectedIndex(null);
+    setHoveredIndex(null);
+    setActiveCategory(category);
+  };
+
+  // Smooth 60fps Orbital Engine: adapts dynamically to filteredProjects.length
   useEffect(() => {
     const stageEl = stageRef.current;
     if (!stageEl) return;
+
+    const count = filteredProjects.length;
+    if (count === 0) return;
 
     const prefersReducedMotion = window.matchMedia(
       '(prefers-reduced-motion: reduce)'
@@ -37,9 +67,9 @@ export function ProjectsSection() {
 
     let rafId = null;
     let isInViewport = true;
-    // Counter-clockwise gentle drift (-0.15 rad/s) so it contrasts nicely with Skills
-    const baseSpeed = prefersReducedMotion ? 0 : -0.15;
-    let angleOffset = -Math.PI / 6;
+    // Pause rotation when only 1 build is displayed so it stays anchored cleanly beside the hub
+    const baseSpeed = prefersReducedMotion || count === 1 ? 0 : -0.15;
+    let angleOffset = count === 1 ? 0 : -Math.PI / 6;
     let currentSpeed = baseSpeed;
     let lastTime = performance.now();
 
@@ -51,12 +81,13 @@ export function ProjectsSection() {
 
       const cx = width / 2;
       const cy = height / 2;
-      const count = PROJECTS.length;
 
-      // Expand orbit radii slightly if there are 5+ projects so pods never collide
-      const rxFactor = count > 4 ? 0.37 : 0.34;
+      const rxFactor = count === 1 ? 0.27 : count > 4 ? 0.37 : 0.34;
       const ryFactor = count > 4 ? 0.35 : 0.32;
-      const rx = Math.min(width * rxFactor, count > 4 ? 395 : 365);
+      const rx = Math.min(
+        width * rxFactor,
+        count === 1 ? 265 : count > 4 ? 395 : 365
+      );
       const ry = Math.min(height * ryFactor, count > 4 ? 255 : 230);
       const hubRadius = width >= 1024 ? 86 : 74;
 
@@ -138,12 +169,12 @@ export function ProjectsSection() {
       resizeObserver.disconnect();
       visibilityObserver.disconnect();
     };
-  }, []);
+  }, [filteredProjects]);
 
   const hoveredProject =
-    typeof hoveredIndex === 'number' ? PROJECTS[hoveredIndex] : null;
+    typeof hoveredIndex === 'number' ? filteredProjects[hoveredIndex] : null;
 
-  const isDenseOrbit = PROJECTS.length > 4;
+  const isDenseOrbit = filteredProjects.length > 4;
 
   return (
     <section
@@ -151,12 +182,13 @@ export function ProjectsSection() {
       className="relative overflow-hidden bg-[#060708] py-24 lg:py-32 border-b border-white/[0.06]"
     >
       {/* Ambient Constellation Layer */}
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0 opacity-65 [mask-image:radial-gradient(ellipse_90%_80%_at_50%_45%,#000_55%,transparent_100%)]"
-          >
-            <ParticleCanvas linkDistance={140} mouseRadius={200} />
-          </div>
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 opacity-65 [mask-image:radial-gradient(ellipse_90%_80%_at_50%_45%,#000_55%,transparent_100%)]"
+      >
+        <ParticleCanvas linkDistance={140} mouseRadius={200} />
+      </div>
+
       {/* Top Section Mint Specular Beam */}
       <div
         aria-hidden="true"
@@ -179,16 +211,24 @@ export function ProjectsSection() {
         <SectionHeader
           eyebrow="Shipped Systems"
           title="Featured Engineering Builds"
-          subtitle="Click any orbiting build to inspect its system architecture and weave its live technology spider-nest."
+          subtitle="Filter by engineering domain or click any build to inspect its system architecture and technology spider-nest."
+        />
+
+        {/* Domain Filter Controls */}
+        <ProjectFilter
+          categories={PROJECT_CATEGORIES}
+          activeCategory={activeCategory}
+          onSelectCategory={handleSelectCategory}
+          counts={categoryCounts}
         />
 
         {/* DESKTOP & TABLET: Smooth Circular Orbit Stage with Connected Tether Lines */}
         <div
           ref={stageRef}
-          className={`relative hidden md:block w-full mx-auto ${
+          className={`relative hidden md:block w-full mx-auto transition-[height] duration-300 ${
             isDenseOrbit
               ? 'h-[42rem] lg:h-[46rem]'
-              : 'h-[39rem] lg:h-[43rem]'
+              : 'h-[34rem] lg:h-[38rem]'
           }`}
         >
           {/* Ambient Orbital Halo Rings */}
@@ -222,7 +262,7 @@ export function ProjectsSection() {
               </filter>
             </defs>
 
-            {PROJECTS.map((project, idx) => {
+            {filteredProjects.map((project, idx) => {
               const isHighlighted =
                 hoveredIndex === idx || selectedIndex === idx;
               return (
@@ -302,13 +342,14 @@ export function ProjectsSection() {
               ) : (
                 <>
                   <span className="text-lg lg:text-xl font-bold tracking-tight text-white leading-none">
-                    {PROJECTS.length} Builds
+                    {filteredProjects.length}{' '}
+                    {filteredProjects.length === 1 ? 'Build' : 'Builds'}
                   </span>
-                  <span className="font-mono text-[10px] font-medium tracking-[0.16em] uppercase text-[#47f59c] mt-1">
-                    Production
+                  <span className="font-mono text-[10px] font-medium tracking-[0.14em] uppercase text-[#47f59c] mt-1 line-clamp-1">
+                    {activeCategory === 'All' ? 'Production' : activeCategory}
                   </span>
                   <span className="font-mono text-[9px] text-zinc-400 mt-0.5">
-                    {totalUniqueTechCount} Technologies
+                    {visibleUniqueTechCount} Technologies
                   </span>
                 </>
               )}
@@ -316,7 +357,7 @@ export function ProjectsSection() {
           </div>
 
           {/* Orbiting Chamfered Project Pods */}
-          {PROJECTS.map((project, index) => (
+          {filteredProjects.map((project, index) => (
             <div
               key={project.id || project.title}
               ref={(el) => {
@@ -344,12 +385,13 @@ export function ProjectsSection() {
           <div className="flex items-center justify-center gap-3 py-3 px-4 rounded-full bg-[#0b0f0d] border border-[#47f59c]/35 w-fit mx-auto">
             <span className="w-2 h-2 rounded-full bg-[#47f59c] animate-pulse" />
             <span className="font-mono text-xs text-zinc-200">
-              {PROJECTS.length} Shipped Systems · Tap any build to inspect
+              {filteredProjects.length}{' '}
+              {filteredProjects.length === 1 ? 'Build' : 'Builds'} · Tap any card to inspect
             </span>
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
-            {PROJECTS.map((project, index) => (
+            {filteredProjects.map((project, index) => (
               <ProjectCard
                 key={project.id || project.title}
                 project={project}
@@ -364,7 +406,7 @@ export function ProjectsSection() {
 
       {/* Interactive Spider-Nest Architecture & Tech-Stack Modal */}
       <ProjectSpiderNestModal
-        projects={PROJECTS}
+        projects={filteredProjects}
         activeIndex={selectedIndex}
         onClose={() => setSelectedIndex(null)}
         onSelectIndex={setSelectedIndex}

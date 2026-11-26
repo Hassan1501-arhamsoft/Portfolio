@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { MapPin } from 'lucide-react';
 import { TiltCard } from '../../../shared/components/TiltCard';
 import { HERO_DATA } from '../data/hero.data';
 
@@ -168,7 +169,9 @@ export function ProfileCard() {
           animation: solar-orbit-ccw var(--orbit-duration, 22s) linear infinite;
         }
         .group:hover .orbit-spin-cw,
-        .group:hover .orbit-spin-ccw {
+        .group:hover .orbit-spin-ccw,
+        .group:focus-within .orbit-spin-cw,
+        .group:focus-within .orbit-spin-ccw {
           animation-play-state: paused;
         }
         @media (prefers-reduced-motion: reduce) {
@@ -234,7 +237,7 @@ export function ProfileCard() {
         {/* Layer 2: Central Star (Cutout Portrait Stage) */}
         <div className="relative z-10 w-full flex justify-center [transform-style:preserve-3d] transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:[transform:translateZ(14px)] motion-reduce:transform-none">
           {profileCard.avatarUrl && !imgError ? (
-            <div className="relative w-[18.5rem] sm:w-[21.5rem] lg:w-[23.5rem] h-[23rem] sm:h-[26.5rem] lg:h-[29rem] [mask-image:linear-gradient(to_bottom,#000_75%,transparent_100%)]">
+            <div className="relative w-[17.5rem] sm:w-[21.5rem] lg:w-[23.5rem] h-[22rem] sm:h-[26.5rem] lg:h-[29rem] [mask-image:linear-gradient(to_bottom,#000_75%,transparent_100%)]">
               <img
                 src={profileCard.avatarUrl}
                 alt={`${HERO_DATA.name} — ${HERO_DATA.role}`}
@@ -269,7 +272,7 @@ export function ProfileCard() {
           )}
         </div>
 
-        {/* Layer 3: 3D Tilted Solar-System Tool Orbits */}
+        {/* Layer 3: 3D Tilted Solar-System Tool Orbits (Scaled to fit mobile viewports without clipping) */}
         <div
           aria-label="Core technology orbit"
           className="pointer-events-none absolute inset-x-0 top-[58%] -translate-y-1/2 flex items-center justify-center z-20 [transform-style:preserve-3d]"
@@ -280,7 +283,7 @@ export function ProfileCard() {
               transform: 'rotateX(68deg) rotateY(-10deg)',
               '--orbit-duration': '20s',
             }}
-            className="relative flex items-center justify-center w-[20rem] h-[20rem] sm:w-[24.5rem] sm:h-[24.5rem] lg:w-[27rem] lg:h-[27rem] rounded-full border border-[#47f59c]/30 shadow-[0_0_30px_rgba(71,245,156,0.08),inset_0_0_24px_rgba(71,245,156,0.06)] [transform-style:preserve-3d]"
+            className="relative flex items-center justify-center w-[16.5rem] h-[16.5rem] sm:w-[24.5rem] sm:h-[24.5rem] lg:w-[27rem] lg:h-[27rem] rounded-full border border-[#47f59c]/30 shadow-[0_0_30px_rgba(71,245,156,0.08),inset_0_0_24px_rgba(71,245,156,0.06)] [transform-style:preserve-3d]"
           >
             <div className="orbit-spin-cw relative w-full h-full rounded-full [transform-style:preserve-3d]">
               {INNER_ORBIT_TOOLS.map(({ name, angle, Icon }) => (
@@ -297,15 +300,17 @@ export function ProfileCard() {
                     {/* Counter-Spin to Keep Icon Upright */}
                     <div className="orbit-spin-ccw [transform-style:preserve-3d]">
                       {/* Counter-Tilt to Face Camera Flat */}
-                      <div
+                      <button
+                        type="button"
+                        aria-label={name}
                         style={{ transform: 'rotateY(10deg) rotateX(-68deg)' }}
-                        className="pointer-events-auto group/planet relative flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-[#111316]/90 backdrop-blur-xl border border-white/[0.14] shadow-[0_8px_24px_rgba(0,0,0,0.85),0_0_16px_rgba(71,245,156,0.2),inset_0_1px_0_rgba(255,255,255,0.18)] transition-transform duration-300 hover:scale-125 hover:border-[#47f59c]"
+                        className="pointer-events-auto group/planet relative flex items-center justify-center w-9 h-9 sm:w-11 sm:h-11 rounded-2xl bg-[#111316]/90 backdrop-blur-xl border border-white/[0.14] shadow-[0_8px_24px_rgba(0,0,0,0.85),0_0_16px_rgba(71,245,156,0.2),inset_0_1px_0_rgba(255,255,255,0.18)] transition-transform duration-300 hover:scale-125 focus-visible:scale-125 hover:border-[#47f59c] focus-visible:border-[#47f59c] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#47f59c]"
                       >
-                        <Icon className="w-5 h-5 sm:w-5.5 sm:h-5.5" />
-                        <span className="pointer-events-none absolute -top-7 px-2 py-0.5 rounded-full bg-[#0b0d0f]/95 border border-[#47f59c]/35 font-mono text-[10px] font-medium text-white whitespace-nowrap opacity-0 transition-opacity duration-200 group-hover/planet:opacity-100">
+                        <Icon className="w-4 h-4 sm:w-[22px] sm:h-[22px]" />
+                        <span className="pointer-events-none absolute -top-7 px-2 py-0.5 rounded-full bg-[#0b0d0f]/95 border border-[#47f59c]/35 font-mono text-[10px] font-medium text-white whitespace-nowrap opacity-0 transition-opacity duration-200 group-hover/planet:opacity-100 group-focus/planet:opacity-100">
                           {name}
                         </span>
-                      </div>
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -319,7 +324,7 @@ export function ProfileCard() {
               transform: 'rotateX(68deg) rotateY(-10deg)',
               '--orbit-duration': '28s',
             }}
-            className="absolute flex items-center justify-center w-[25.5rem] h-[25.5rem] sm:w-[31rem] sm:h-[31rem] lg:w-[34.5rem] lg:h-[34.5rem] rounded-full border border-dashed border-white/[0.14] [transform-style:preserve-3d]"
+            className="absolute flex items-center justify-center w-[20.5rem] h-[20.5rem] sm:w-[31rem] sm:h-[31rem] lg:w-[34.5rem] lg:h-[34.5rem] rounded-full border border-dashed border-white/[0.14] [transform-style:preserve-3d]"
           >
             <div className="orbit-spin-ccw relative w-full h-full rounded-full [transform-style:preserve-3d]">
               {OUTER_ORBIT_TOOLS.map(({ name, angle, Icon }) => (
@@ -335,15 +340,17 @@ export function ProfileCard() {
                     {/* Counter-Spin (CW) to Keep Icon Upright */}
                     <div className="orbit-spin-cw [transform-style:preserve-3d]">
                       {/* Counter-Tilt to Face Camera Flat */}
-                      <div
+                      <button
+                        type="button"
+                        aria-label={name}
                         style={{ transform: 'rotateY(10deg) rotateX(-68deg)' }}
-                        className="pointer-events-auto group/planet relative flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#111316]/90 backdrop-blur-xl border border-white/[0.12] shadow-[0_8px_24px_rgba(0,0,0,0.85),inset_0_1px_0_rgba(255,255,255,0.15)] transition-transform duration-300 hover:scale-125 hover:border-[#47f59c]"
+                        className="pointer-events-auto group/planet relative flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-[#111316]/90 backdrop-blur-xl border border-white/[0.12] shadow-[0_8px_24px_rgba(0,0,0,0.85),inset_0_1px_0_rgba(255,255,255,0.15)] transition-transform duration-300 hover:scale-125 focus-visible:scale-125 hover:border-[#47f59c] focus-visible:border-[#47f59c] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#47f59c]"
                       >
                         <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
-                        <span className="pointer-events-none absolute -top-7 px-2 py-0.5 rounded-full bg-[#0b0d0f]/95 border border-[#47f59c]/35 font-mono text-[10px] font-medium text-white whitespace-nowrap opacity-0 transition-opacity duration-200 group-hover/planet:opacity-100">
+                        <span className="pointer-events-none absolute -top-7 px-2 py-0.5 rounded-full bg-[#0b0d0f]/95 border border-[#47f59c]/35 font-mono text-[10px] font-medium text-white whitespace-nowrap opacity-0 transition-opacity duration-200 group-hover/planet:opacity-100 group-focus/planet:opacity-100">
                           {name}
                         </span>
-                      </div>
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -351,6 +358,17 @@ export function ProfileCard() {
             </div>
           </div>
         </div>
+
+        {/* Layer 4: Floating Base Telemetry Chip */}
+        {profileCard.location && (
+          <div className="relative z-30 mb-3 sm:mb-5 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#0b0e0d]/90 backdrop-blur-xl border border-[#47f59c]/30 shadow-[0_10px_28px_rgba(0,0,0,0.85),0_0_20px_-6px_rgba(71,245,156,0.4)]">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#47f59c] animate-pulse" />
+            <MapPin className="w-3.5 h-3.5 text-[#47f59c]" />
+            <span className="font-mono text-[11px] font-medium tracking-wider text-zinc-200">
+              {profileCard.location}
+            </span>
+          </div>
+        )}
       </div>
     </TiltCard>
   );

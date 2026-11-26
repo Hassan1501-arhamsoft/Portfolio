@@ -15,6 +15,18 @@ export const HERO_DATA = {
     label: 'Contact Me',
     href: '#contact',
   },
+  credentials: [
+    {
+      id: 'experience',
+      value: '1+ Year',
+      label: 'Production Exp.',
+    },
+    {
+      id: 'degree',
+      value: '3.73 CGPA',
+      label: 'BSCS Honours',
+    },
+  ],
   profileCard: {
     avatarUrl: profileImg,
     fileLabel: 'hassan.architecture.ts',
@@ -24,15 +36,18 @@ export const HERO_DATA = {
     pillars: [
       {
         title: 'AI & Retrieval Pipelines',
-        detail: 'Hybrid Vector Search, RRF, Cross-Encoder Re-Ranking, SSE Streaming & ABAC',
+        detail:
+          'Hybrid Vector Search, RRF, Cross-Encoder Re-Ranking, SSE Streaming & ABAC',
       },
       {
         title: 'Full-Stack MERN Systems',
-        detail: 'React, Node.js, Express, MongoDB, PostgreSQL & Automated API Testing',
+        detail:
+          'React, Node.js, Express, MongoDB, PostgreSQL & Automated API Testing',
       },
       {
         title: 'Real-Time & IoT Edge',
-        detail: 'Socket.IO, WebRTC Peer Audio, Arduino & RFID Hardware Integrations',
+        detail:
+          'Socket.IO, WebRTC Peer Audio, ESP32 / Arduino & MQTT Hardware Integrations',
       },
     ],
     coreStack: [

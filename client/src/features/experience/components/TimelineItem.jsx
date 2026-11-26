@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Award,
   Briefcase,
@@ -11,23 +11,22 @@ import {
   Sparkles,
   Terminal,
   X,
-} from 'lucide-react';
+} from "lucide-react";
 
-const HEX_CLIP =
-  'polygon(50% 0%, 95% 25%, 95% 75%, 50% 100%, 5% 75%, 5% 25%)';
+const HEX_CLIP = "polygon(50% 0%, 95% 25%, 95% 75%, 50% 100%, 5% 75%, 5% 25%)";
 
 // Chamfered octagonal aerospace shape matching Skills, Services & Projects
 const CHAMFER_CLIP =
-  'polygon(16px 0%, calc(100% - 16px) 0%, 100% 16px, 100% calc(100% - 16px), calc(100% - 16px) 100%, 16px 100%, 0% calc(100% - 16px), 0% 16px)';
+  "polygon(16px 0%, calc(100% - 16px) 0%, 100% 16px, 100% calc(100% - 16px), calc(100% - 16px) 100%, 16px 100%, 0% calc(100% - 16px), 0% 16px)";
 
 function normalizeExperienceItem(item = {}) {
-  const title = item.role || item.title || 'Engineering Milestone';
+  const title = item.role || item.title || "Engineering Milestone";
   const organization =
-    item.organization || item.company || item.institution || '';
-  const period = item.period || item.duration || item.date || '';
-  const location = item.location || '';
-  const summary = item.summary || item.description || '';
-  const type = item.type || '';
+    item.organization || item.company || item.institution || "";
+  const period = item.period || item.duration || item.date || "";
+  const location = item.location || "";
+  const summary = item.summary || item.description || "";
+  const type = item.type || "";
   const highlights =
     item.highlights || item.achievements || item.responsibilities || [];
   const rawNodes =
@@ -37,13 +36,13 @@ function normalizeExperienceItem(item = {}) {
     rawNodes.length > 0
       ? rawNodes
       : highlights.map((h) =>
-          h.length > 34 ? `${h.slice(0, 32).trim()}…` : h
+          h.length > 34 ? `${h.slice(0, 32).trim()}…` : h,
         );
 
   const rawType = type.toLowerCase();
   const isEducation =
-    rawType.includes('edu') ||
-    rawType.includes('degree') ||
+    rawType.includes("edu") ||
+    rawType.includes("degree") ||
     /\b(bachelor|university|bscs|bs)\b/i.test(`${title} ${organization}`);
   const isInternship =
     /\bintern(ship)?\b/i.test(rawType) ||
@@ -70,10 +69,10 @@ function normalizeExperienceItem(item = {}) {
 /**
  * Static top-level icon switcher (avoids dynamic component assignment during render)
  */
-function MilestoneIcon({ data, className = 'w-4 h-4' }) {
+function MilestoneIcon({ data, className = "w-4 h-4" }) {
   if (data.isEducation) return <GraduationCap className={className} />;
   if (data.isInternship) return <Terminal className={className} />;
-  if (data.type.toLowerCase().includes('cert')) {
+  if (data.type.toLowerCase().includes("cert")) {
     return <Award className={className} />;
   }
   return <Briefcase className={className} />;
@@ -128,18 +127,18 @@ export function TimelineItem({
 }) {
   const cardRef = useRef(null);
   const data = useMemo(() => normalizeExperienceItem(item), [item]);
-  const stepNumber = String(index + 1).padStart(2, '0');
+  const stepNumber = String(index + 1).padStart(2, "0");
 
   const handleMouseMove = (e) => {
     const card = cardRef.current;
     if (!card) return;
     const rect = card.getBoundingClientRect();
-    card.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
-    card.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
+    card.style.setProperty("--mouse-x", `${e.clientX - rect.left}px`);
+    card.style.setProperty("--mouse-y", `${e.clientY - rect.top}px`);
   };
 
   const handleKeyDown = (e) => {
-    if (e.key === 'Enter' || e.key === ' ') {
+    if (e.key === "Enter" || e.key === " ") {
       e.preventDefault();
       onSelect?.(item, index);
     }
@@ -164,10 +163,10 @@ export function TimelineItem({
         aria-hidden="true"
         className={`pointer-events-none absolute -inset-1 rounded-2xl bg-[#47f59c]/25 blur-xl transition-opacity duration-500 ${
           isActive
-            ? 'opacity-95'
+            ? "opacity-95"
             : data.isCurrent
-            ? 'opacity-40 group-hover:opacity-85'
-            : 'opacity-0 group-hover:opacity-75'
+              ? "opacity-40 group-hover:opacity-85"
+              : "opacity-0 group-hover:opacity-75"
         }`}
       />
 
@@ -176,10 +175,10 @@ export function TimelineItem({
         style={{ clipPath: CHAMFER_CLIP }}
         className={`relative p-4 sm:p-5 backdrop-blur-2xl transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.03] group-focus-visible:ring-2 group-focus-visible:ring-[#47f59c] motion-reduce:transform-none ${
           isActive
-            ? 'bg-[#0e1813]/95'
+            ? "bg-[#0e1813]/95"
             : data.isCurrent
-            ? 'bg-[#0d1411]/95 group-hover:bg-[#111b16]/95'
-            : 'bg-[#101316]/92 group-hover:bg-[#121916]/95'
+              ? "bg-[#0d1411]/95 group-hover:bg-[#111b16]/95"
+              : "bg-[#101316]/92 group-hover:bg-[#121916]/95"
         }`}
       >
         {/* Crisp SVG Chamfered Perimeter Border */}
@@ -194,10 +193,10 @@ export function TimelineItem({
             points="16,0.75 272,0.75 287.25,16 287.25,168 272,183.25 16,183.25 0.75,168 0.75,16"
             stroke={
               isActive
-                ? '#47f59c'
+                ? "#47f59c"
                 : data.isCurrent
-                ? 'rgba(71, 245, 156, 0.48)'
-                : 'rgba(255, 255, 255, 0.14)'
+                  ? "rgba(71, 245, 156, 0.48)"
+                  : "rgba(255, 255, 255, 0.14)"
             }
             strokeWidth="1.5"
             className="transition-colors duration-300 group-hover:stroke-[#47f59c]/85"
@@ -206,13 +205,13 @@ export function TimelineItem({
             points="1,24 1,16 16,1 24,1"
             stroke="#47f59c"
             strokeWidth="2"
-            strokeOpacity={isActive || data.isCurrent ? '1' : '0.55'}
+            strokeOpacity={isActive || data.isCurrent ? "1" : "0.55"}
           />
           <polyline
             points="264,183 272,183 287,168 287,160"
             stroke="#47f59c"
             strokeWidth="2"
-            strokeOpacity={isActive || data.isCurrent ? '1' : '0.55'}
+            strokeOpacity={isActive || data.isCurrent ? "1" : "0.55"}
           />
         </svg>
 
@@ -222,7 +221,7 @@ export function TimelineItem({
           className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100 motion-reduce:hidden"
           style={{
             background:
-              'radial-gradient(260px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(71, 245, 156, 0.17), transparent 60%)',
+              "radial-gradient(260px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(71, 245, 156, 0.17), transparent 60%)",
           }}
         />
 
@@ -258,10 +257,10 @@ export function TimelineItem({
             <span className="font-mono text-[10px] tracking-wider uppercase px-2 py-0.5 rounded-full bg-white/[0.03] border border-white/[0.08] text-zinc-400">
               {data.type ||
                 (data.isEducation
-                  ? 'Degree'
+                  ? "Degree"
                   : data.isInternship
-                  ? 'Internship'
-                  : 'Milestone')}
+                    ? "Internship"
+                    : "Milestone")}
             </span>
           )}
         </div>
@@ -319,39 +318,38 @@ export function ExperienceSpiderNestModal({
   const hoveredNode =
     hoverState.forIndex === activeIndex ? hoverState.node : null;
 
-  const rawItem =
-    typeof activeIndex === 'number' ? items[activeIndex] : null;
+  const rawItem = typeof activeIndex === "number" ? items[activeIndex] : null;
   const data = useMemo(
     () => (rawItem ? normalizeExperienceItem(rawItem) : null),
-    [rawItem]
+    [rawItem],
   );
 
   useEffect(() => {
     if (!data) return;
 
     const prevOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
+    document.body.style.overflow = "hidden";
 
     const handleKeyDown = (e) => {
-      if (e.key === 'Escape') onClose?.();
-      if (e.key === 'ArrowRight' && items.length > 1) {
+      if (e.key === "Escape") onClose?.();
+      if (e.key === "ArrowRight" && items.length > 1) {
         onSelectIndex?.((activeIndex + 1) % items.length);
       }
-      if (e.key === 'ArrowLeft' && items.length > 1) {
+      if (e.key === "ArrowLeft" && items.length > 1) {
         onSelectIndex?.((activeIndex - 1 + items.length) % items.length);
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener("keydown", handleKeyDown);
     return () => {
       document.body.style.overflow = prevOverflow;
-      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener("keydown", handleKeyDown);
     };
   }, [data, activeIndex, items.length, onClose, onSelectIndex]);
 
   const webNodes = useMemo(
     () => buildExperienceWebNodes(data?.webNodes || []),
-    [data]
+    [data],
   );
 
   const { innerPolygonPoints, outerPolygonPoints, crossLinks } = useMemo(() => {
@@ -359,7 +357,7 @@ export function ExperienceSpiderNestModal({
     const outer = webNodes.filter((n) => !n.isInner);
 
     const toPoints = (arr) =>
-      arr.length >= 3 ? arr.map((n) => `${n.x},${n.y}`).join(' ') : '';
+      arr.length >= 3 ? arr.map((n) => `${n.x},${n.y}`).join(" ") : "";
 
     const links = outer
       .map((outNode, idx) => {
@@ -406,66 +404,97 @@ export function ExperienceSpiderNestModal({
         />
 
         {/* Modal Header */}
-        <div className="flex flex-wrap items-start justify-between gap-4 p-5 sm:p-6 border-b border-white/[0.07]">
-          <div className="flex items-start gap-3.5">
-            <div
-              style={{ clipPath: HEX_CLIP }}
-              className="flex items-center justify-center w-11 h-12 p-[1.5px] bg-gradient-to-b from-[#47f59c] to-[#10b981] shrink-0 mt-0.5"
-            >
+        <div className="p-4 sm:p-6 border-b border-white/[0.07]">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex items-start gap-3 sm:gap-3.5 min-w-0">
               <div
                 style={{ clipPath: HEX_CLIP }}
-                className="flex items-center justify-center w-full h-full bg-[#090d0b] text-[#47f59c]"
+                className="flex items-center justify-center w-10 h-11 sm:w-11 sm:h-12 p-[1.5px] bg-gradient-to-b from-[#47f59c] to-[#10b981] shrink-0 mt-0.5"
               >
-                <MilestoneIcon data={data} className="w-5 h-5" />
+                <div
+                  style={{ clipPath: HEX_CLIP }}
+                  className="flex items-center justify-center w-full h-full bg-[#090d0b] text-[#47f59c]"
+                >
+                  <MilestoneIcon data={data} className="w-5 h-5" />
+                </div>
+              </div>
+
+              <div className="min-w-0">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="font-mono text-[10px] sm:text-[11px] font-semibold tracking-widest uppercase text-[#47f59c]">
+                    Milestone {String(activeIndex + 1).padStart(2, "0")} /{" "}
+                    {String(items.length).padStart(2, "0")}
+                  </span>
+
+                  {data.isCurrent && (
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 font-mono text-[10px] font-semibold uppercase tracking-wider rounded-full bg-[#47f59c]/15 text-[#7efcc0] border border-[#47f59c]/35 shadow-[0_0_16px_-4px_rgba(71,245,156,0.5)]">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#47f59c] animate-pulse" />
+                      Current Role
+                    </span>
+                  )}
+                </div>
+
+                <h3 className="text-lg sm:text-2xl font-bold tracking-tight text-white mt-1">
+                  {data.title}
+                </h3>
+
+                {/* Scannable Organization & Telemetry Pills */}
+                <div className="flex flex-wrap items-center gap-2 mt-2">
+                  <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs sm:text-[13px] font-semibold text-white bg-white/[0.05] border border-white/[0.1]">
+                    {data.organization}
+                  </span>
+
+                  {data.period && (
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md font-mono text-[11px] text-[#47f59c] bg-[#47f59c]/[0.08] border border-[#47f59c]/25">
+                      <Calendar className="w-3.5 h-3.5 shrink-0" />
+                      {data.period}
+                    </span>
+                  )}
+
+                  {data.location && (
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md font-mono text-[11px] text-zinc-300 bg-white/[0.03] border border-white/[0.08]">
+                      <MapPin className="w-3.5 h-3.5 text-[#47f59c]/80 shrink-0" />
+                      {data.location}
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
 
-            <div>
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="font-mono text-[11px] font-semibold tracking-widest uppercase text-[#47f59c]">
-                  Milestone {String(activeIndex + 1).padStart(2, '0')} /{' '}
-                  {String(items.length).padStart(2, '0')}
-                </span>
-
-                {data.isCurrent && (
-                  <span className="px-2 py-0.5 font-mono text-[10px] font-semibold uppercase tracking-wider rounded-full bg-[#47f59c]/15 text-[#7efcc0] border border-[#47f59c]/35">
-                    Current Role
-                  </span>
-                )}
-              </div>
-
-              <h3 className="text-lg sm:text-2xl font-bold tracking-tight text-white mt-1">
-                {data.title}
-              </h3>
-
-              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1 text-xs sm:text-sm text-zinc-300">
-                <span className="font-semibold text-white">
-                  {data.organization}
-                </span>
-                {data.period && (
-                  <span className="inline-flex items-center gap-1 font-mono text-xs text-[#47f59c]">
-                    <Calendar className="w-3.5 h-3.5" />
-                    {data.period}
-                  </span>
-                )}
-                {data.location && (
-                  <span className="inline-flex items-center gap-1 text-xs text-zinc-400">
-                    <MapPin className="w-3.5 h-3.5 text-zinc-500" />
-                    {data.location}
-                  </span>
-                )}
-              </div>
-            </div>
+            <button
+              type="button"
+              onClick={onClose}
+              aria-label="Close career milestone details"
+              className="shrink-0 p-2 rounded-full text-zinc-400 bg-white/[0.04] border border-white/[0.08] hover:text-[#47f59c] hover:border-[#47f59c]/40 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#47f59c]"
+            >
+              <X className="w-4 h-4" />
+            </button>
           </div>
 
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Close career milestone details"
-            className="p-2 rounded-full text-zinc-400 bg-white/[0.04] border border-white/[0.08] hover:text-[#47f59c] hover:border-[#47f59c]/40 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#47f59c]"
-          >
-            <X className="w-4 h-4" />
-          </button>
+          {/* Full-Width Role Impact Banner */}
+          {(data.summary || data.description) && (
+            <div className="relative mt-4 rounded-xl bg-gradient-to-r from-[#0f2419]/85 via-[#0c1411]/90 to-[#090c0b]/90 border border-[#47f59c]/25 border-l-2 border-l-[#47f59c] px-3.5 py-2.5 sm:px-4 sm:py-3 shadow-[0_10px_28px_-10px_rgba(71,245,156,0.22),inset_0_1px_0_0_rgba(255,255,255,0.08)] overflow-hidden">
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-x-6 top-0 h-px bg-gradient-to-r from-[#47f59c]/65 via-[#7efcc0]/25 to-transparent"
+              />
+              <span
+                aria-hidden="true"
+                className="pointer-events-none absolute bottom-1.5 right-1.5 w-2 h-2 border-b border-r border-[#47f59c]/55"
+              />
+
+              <div className="relative z-10 flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-3">
+                <span className="inline-flex items-center gap-1.5 self-start sm:self-auto shrink-0 px-2 py-0.5 rounded-md font-mono text-[9px] sm:text-[10px] font-semibold tracking-[0.16em] uppercase bg-[#47f59c]/12 text-[#47f59c] border border-[#47f59c]/30">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#47f59c] shadow-[0_0_6px_#47f59c]" />
+                  {data.type === "education" ? "Academic Brief" : "Role Brief"}
+                </span>
+
+                <p className="text-xs sm:text-[14px] font-normal tracking-[-0.01em] leading-relaxed text-zinc-100">
+                  {data.summary || data.description}
+                </p>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Two-Column Body: Impact & Responsibilities + Interactive Tech/Domain Spider-Nest */}
@@ -480,13 +509,13 @@ export function ExperienceSpiderNestModal({
               )}
 
               {data.highlights.length > 0 && (
-                <div className={data.summary ? 'mt-5' : ''}>
+                <div className={data.summary ? "mt-5" : ""}>
                   <div className="flex items-center gap-2 mb-3">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#47f59c] shadow-[0_0_8px_#47f59c]" />
                     <h4 className="font-mono text-[11px] font-semibold tracking-[0.18em] uppercase text-[#47f59c]">
                       {data.isEducation
-                        ? 'Academic & Technical Focus'
-                        : 'Key Engineering Impact'}
+                        ? "Academic & Technical Focus"
+                        : "Key Engineering Impact"}
                     </h4>
                   </div>
 
@@ -497,7 +526,7 @@ export function ExperienceSpiderNestModal({
                         className="flex items-start gap-3 p-3 rounded-xl bg-white/[0.025] border border-white/[0.06] text-xs sm:text-[13px] leading-relaxed text-zinc-200"
                       >
                         <span className="shrink-0 mt-0.5 font-mono text-[10px] font-semibold px-1.5 py-0.5 rounded bg-[#47f59c]/10 text-[#47f59c] border border-[#47f59c]/25">
-                          {String(idx + 1).padStart(2, '0')}
+                          {String(idx + 1).padStart(2, "0")}
                         </span>
                         <span>{point}</span>
                       </li>
@@ -512,10 +541,10 @@ export function ExperienceSpiderNestModal({
           <div className="lg:col-span-6 flex flex-col">
             <div className="flex items-center justify-between gap-2 mb-2.5">
               <span className="font-mono text-[11px] font-semibold tracking-[0.16em] uppercase text-zinc-400">
-                Applied Stack ({webNodes.length} Nodes)
+                Applied Stack & Competencies
               </span>
               <span className="font-mono text-[10px] text-[#47f59c] shrink-0">
-                Hover nodes to trace silk
+                Hover to trace node connections
               </span>
             </div>
 
@@ -584,10 +613,10 @@ export function ExperienceSpiderNestModal({
                       y2={link.to.y}
                       stroke={
                         isLit
-                          ? 'rgba(71, 245, 156, 0.75)'
-                          : 'rgba(255, 255, 255, 0.11)'
+                          ? "rgba(71, 245, 156, 0.75)"
+                          : "rgba(255, 255, 255, 0.11)"
                       }
-                      strokeWidth={isLit ? '0.55' : '0.32'}
+                      strokeWidth={isLit ? "0.55" : "0.32"}
                       className="transition-all duration-300"
                     />
                   );
@@ -604,12 +633,12 @@ export function ExperienceSpiderNestModal({
                       y2={node.y}
                       stroke={
                         isLit
-                          ? '#47f59c'
+                          ? "#47f59c"
                           : node.isInner
-                          ? 'rgba(71, 245, 156, 0.48)'
-                          : 'rgba(71, 245, 156, 0.28)'
+                            ? "rgba(71, 245, 156, 0.48)"
+                            : "rgba(71, 245, 156, 0.28)"
                       }
-                      strokeWidth={isLit ? '0.75' : '0.42'}
+                      strokeWidth={isLit ? "0.75" : "0.42"}
                       className="transition-all duration-300"
                     />
                   );
@@ -650,18 +679,18 @@ export function ExperienceSpiderNestModal({
                     }
                     className={`absolute -translate-x-1/2 -translate-y-1/2 z-20 flex items-center gap-1.5 max-w-[155px] sm:max-w-[180px] px-2.5 py-1.5 rounded-full font-mono text-[10px] sm:text-[11px] font-medium border backdrop-blur-xl transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#47f59c] ${
                       isLit
-                        ? 'z-30 scale-105 bg-[#0f2419]/95 text-white border-[#47f59c] shadow-[0_0_22px_rgba(71,245,156,0.6),inset_0_1px_0_rgba(255,255,255,0.3)]'
+                        ? "z-30 scale-105 bg-[#0f2419]/95 text-white border-[#47f59c] shadow-[0_0_22px_rgba(71,245,156,0.6),inset_0_1px_0_rgba(255,255,255,0.3)]"
                         : node.isInner
-                        ? 'bg-[#121619]/95 text-zinc-100 border-[#47f59c]/40 shadow-[0_8px_20px_rgba(0,0,0,0.85)] hover:border-[#47f59c]'
-                        : 'bg-[#111316]/90 text-zinc-200 border-white/[0.15] shadow-[0_8px_20px_rgba(0,0,0,0.85)] hover:border-[#47f59c]/70'
+                          ? "bg-[#121619]/95 text-zinc-100 border-[#47f59c]/40 shadow-[0_8px_20px_rgba(0,0,0,0.85)] hover:border-[#47f59c]"
+                          : "bg-[#111316]/90 text-zinc-200 border-white/[0.15] shadow-[0_8px_20px_rgba(0,0,0,0.85)] hover:border-[#47f59c]/70"
                     }`}
                   >
                     <span
                       aria-hidden="true"
                       className={`w-1.5 h-1.5 rounded-full shrink-0 ${
                         isLit
-                          ? 'bg-[#47f59c] scale-125 shadow-[0_0_8px_#47f59c]'
-                          : 'bg-[#47f59c]/85'
+                          ? "bg-[#47f59c] scale-125 shadow-[0_0_8px_#47f59c]"
+                          : "bg-[#47f59c]/85"
                       }`}
                     />
                     <span className="truncate">{node.label}</span>
@@ -687,9 +716,7 @@ export function ExperienceSpiderNestModal({
             </button>
             <button
               type="button"
-              onClick={() =>
-                onSelectIndex?.((activeIndex + 1) % items.length)
-              }
+              onClick={() => onSelectIndex?.((activeIndex + 1) % items.length)}
               aria-label="Next career milestone"
               className="p-1.5 rounded-full bg-white/[0.04] border border-white/[0.08] text-zinc-300 hover:text-[#47f59c] hover:border-[#47f59c]/40 transition-colors"
             >
@@ -709,11 +736,11 @@ export function ExperienceSpiderNestModal({
                 onClick={() => onSelectIndex?.(idx)}
                 className={`px-2.5 py-1 rounded-full font-mono text-[11px] transition-all ${
                   idx === activeIndex
-                    ? 'bg-[#47f59c] text-zinc-950 font-semibold shadow-[0_0_16px_rgba(71,245,156,0.45)]'
-                    : 'bg-white/[0.04] text-zinc-400 border border-white/[0.08] hover:text-white'
+                    ? "bg-[#47f59c] text-zinc-950 font-semibold shadow-[0_0_16px_rgba(71,245,156,0.45)]"
+                    : "bg-white/[0.04] text-zinc-400 border border-white/[0.08] hover:text-white"
                 }`}
               >
-                {String(idx + 1).padStart(2, '0')}
+                {String(idx + 1).padStart(2, "0")}
               </button>
             ))}
           </div>

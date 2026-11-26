@@ -47,6 +47,32 @@ export const PROJECTS_DATA = [
     liveUrl: null,
   },
   {
+    id: 'llm-judge-rag-evaluator',
+    title: 'Automated RAG Evaluation & Guardrails Suite',
+    category: 'AI & RAG',
+    featured: true,
+    // Reuses `chatbot` temporarily so Vite compiles cleanly—replace with a dedicated screenshot when ready
+    image: chatbot,
+    summary:
+      'Automated LLM-as-a-Judge quality benchmarking and adversarial security suite validating retrieval recall, answer faithfulness, moderation filters, and ABAC data isolation.',
+    architecture: [
+      'Built an automated Gemini API LLM-as-a-Judge pipeline scoring context recall and answer faithfulness across golden evaluation datasets, hitting 1.00 average scores.',
+      'Tests multi-layer safety defenses covering OpenAI moderation screening, direct/indirect prompt-injection guardrails, and query transformation edge cases.',
+      'Verifies Attribute-Based Access Control (ABAC) document isolation and role-gated administrative tool-calling boundaries across multi-department test personas.',
+    ],
+    stack: [
+      'Gemini API',
+      'LLM-as-a-Judge',
+      'OpenAI Moderation',
+      'Prompt Guardrails',
+      'ABAC Testing',
+      'Node.js',
+      'Jest & Supertest',
+    ],
+    repoUrl: 'https://github.com/hassan42772',
+    liveUrl: null,
+  },
+  {
     id: 'social-media-mern',
     title: 'Full-Stack Social Media Platform',
     category: 'Full-Stack',

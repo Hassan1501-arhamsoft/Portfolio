@@ -18,15 +18,17 @@ export const ACHIEVEMENTS_DATA = [
     image: pmLaptopAwardImg,
     credentialUrl: null,
     summary:
-      'Awarded a merit-based laptop under the national Prime Minister’s Youth Laptop Scheme in recognition of top academic standing during the Bachelor of Science in Computer Science (3.73 / 4.00 CGPA) at The Islamia University of Bahawalpur.',
+      'National merit-based hardware award recognizing top undergraduate Computer Science standing (3.73 / 4.00 CGPA) at The Islamia University of Bahawalpur.',
     highlights: [
       'Selected on strict national academic merit criteria among high-performing undergraduate Computer Science candidates.',
-      'Recognized for sustained academic excellence (3.73/4.00 CGPA) across core software engineering, algorithms, and systems coursework.',
+      'Recognized for sustained academic excellence (3.73 / 4.00 CGPA) across core software engineering, algorithms, and systems coursework.',
     ],
     skills: [
-      'Academic Merit (3.73 CGPA)',
-      'Computer Science (BSCS)',
-      'HEC National Selection',
+      '3.73 / 4.00 CGPA',
+      'National Merit Selection',
+      'Software Engineering',
+      'Algorithms & Systems',
+      'HEC Pakistan',
     ],
   },
   {
@@ -37,9 +39,9 @@ export const ACHIEVEMENTS_DATA = [
     date: '2026',
     featured: true,
     image: ciscoAiCertImg,
-    credentialUrl: null, // Add your Credly / Cisco verification URL here if available
+    credentialUrl: null, // Add your Credly / Cisco verification URL here when available
     summary:
-      'Completed Cisco Networking Academy’s international certification covering artificial intelligence architecture, machine learning workflows, natural language processing, computer vision, and AI ethics.',
+      'International Cisco certification covering machine learning pipelines, neural networks, natural language processing, computer vision, and ethical AI guardrails.',
     highlights: [
       'Mastered core machine learning paradigms including supervised, unsupervised, and reinforcement learning pipelines.',
       'Studied neural network foundations, natural language processing (NLP), and real-world enterprise AI deployment patterns.',

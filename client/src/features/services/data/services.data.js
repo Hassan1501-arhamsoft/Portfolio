@@ -4,10 +4,11 @@ export const SERVICES_DATA = [
     title: 'Full-Stack Web Applications',
     icon: 'layers',
     summary:
-      'End-to-end MERN and PostgreSQL applications engineered with modular APIs, role-based access control, and automated endpoint testing.',
+      'Production-ready MERN and SQL web platforms built from clean database schemas, hardened authentication, and automated API test coverage.',
     deliverables: [
-      'RESTful API architecture & Swagger documentation',
-      'Relational & document database schema design',
+      'RESTful API architecture & interactive Swagger docs',
+      'Normalized MongoDB, MySQL & PostgreSQL schemas',
+      'HTTP-only JWT authentication & policy-based access control',
       'Automated integration testing with Jest & Supertest',
     ],
   },
@@ -16,11 +17,12 @@ export const SERVICES_DATA = [
     title: 'AI & RAG Pipeline Integration',
     icon: 'sparkles',
     summary:
-      'Custom knowledge-base assistants grounded in your private documents using vector search, re-ranking, and token-level streaming.',
+      'Hallucination-resistant AI assistants grounded in your private company data with multi-stage retrieval, strict access permissions, and live streaming.',
     deliverables: [
-      'Hybrid semantic + keyword retrieval with RRF',
-      'Cross-encoder re-ranking & input/output guardrails',
-      'Document-level Attribute-Based Access Control (ABAC)',
+      'Hybrid vector + keyword search with Reciprocal Rank Fusion (RRF)',
+      'Cross-encoder re-ranking & prompt-injection guardrails',
+      'Department-level Attribute-Based Access Control (ABAC)',
+      'Real-time SSE token streaming & LLM-as-a-Judge evaluation',
     ],
   },
   {
@@ -28,11 +30,12 @@ export const SERVICES_DATA = [
     title: 'Real-Time & WebRTC Systems',
     icon: 'radio',
     summary:
-      'Low-latency bi-directional applications for live messaging, notifications, presence tracking, and peer-to-peer audio.',
+      'High-concurrency web applications engineered for instant state synchronization, live messaging, and direct peer-to-peer browser audio.',
     deliverables: [
-      'Socket.IO event rooms & persistent message history',
-      'WebRTC peer-to-peer audio signaling & connections',
-      'Optimistic UI updates & paginated infinite feeds',
+      'Socket.IO event rooms, presence & delivery acknowledgments',
+      'WebRTC peer-to-peer audio signaling & media streams',
+      'Cursor-paginated infinite history & optimistic UI updates',
+      'Two-Factor Authentication (2FA) & session security',
     ],
   },
   {
@@ -40,11 +43,12 @@ export const SERVICES_DATA = [
     title: 'IoT & Hardware-to-Cloud Bridges',
     icon: 'wifi',
     summary:
-      'Microcontroller sensor and RFID workflows connected directly to cloud databases and live web monitoring dashboards.',
+      'End-to-end embedded telemetry connecting ESP32 and Arduino sensor networks directly to cloud databases and real-time control dashboards.',
     deliverables: [
-      'Arduino & RFID/I2C serial telemetry pipelines',
-      'Automated attendance & asset logging APIs',
-      'Real-time administrative analytics dashboards',
+      'ESP32 & Arduino C/C++ sensor, RFID & relay firmware',
+      'Low-latency MQTT & HTTP device-to-cloud ingestion APIs',
+      'Automated attendance, access control & safety alert workflows',
+      'Live web monitoring & remote actuation dashboards',
     ],
   },
 ];

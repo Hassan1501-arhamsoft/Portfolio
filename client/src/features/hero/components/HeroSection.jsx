@@ -24,9 +24,12 @@ const SOCIAL_SUBTITLES = {
   linkedin: "Let's Connect",
 };
 
-export function HeroSection() {
-  // const { profileCard } = HERO_DATA;
+const CREDENTIAL_ICON_MAP = {
+  experience: ShieldCheck,
+  degree: GraduationCap,
+};
 
+export function HeroSection() {
   // Split name into crisp white first name + electric mint last name
   const nameParts = HERO_DATA.name.trim().split(' ');
   const firstName = nameParts[0];
@@ -122,7 +125,7 @@ export function HeroSection() {
         <ParticleCanvas linkDistance={140} mouseRadius={200} />
       </div>
 
-      {/* Reference Dark Emerald Edge Vignettes */}
+      {/* Dark Emerald Edge Vignettes */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute -top-28 -left-32 w-[34rem] h-[28rem] rounded-full bg-[#47f59c]/[0.11] blur-[120px]"
@@ -152,11 +155,17 @@ export function HeroSection() {
               />
             </div>
 
-            {/* Two-Tone Display Headline + Animated Curved Swoosh */}
+            {/* Eyebrow Motto + Two-Tone Display Headline + Animated Curved Swoosh */}
             <div
               style={{ animationDelay: '150ms' }}
-              className="hero-stagger space-y-3"
+              className="hero-stagger space-y-2.5"
             >
+              {HERO_DATA.eyebrow && (
+                <p className="font-mono text-[11px] sm:text-xs font-semibold tracking-[0.22em] uppercase text-[#47f59c]/90">
+                  {HERO_DATA.eyebrow}
+                </p>
+              )}
+
               <h1 className="text-4xl font-bold tracking-[-0.035em] leading-[1.08] text-white sm:text-5xl lg:text-[3.85rem]">
                 <span>{firstName} </span>
                 {lastName && (
@@ -212,18 +221,24 @@ export function HeroSection() {
               </p>
             </div>
 
-            {/* Concise Engineering Summary */}
-            <p
+            {/* Chamfered HUD Engineering Summary */}
+            <div
               style={{ animationDelay: '240ms' }}
-              className="hero-stagger max-w-lg text-sm leading-relaxed text-zinc-300/90 sm:text-[15px]"
+              className="hero-stagger relative max-w-lg rounded-xl bg-gradient-to-r from-[#0f2419]/65 via-[#0b0f0d]/85 to-[#090c0b]/85 border border-white/[0.08] border-l-2 border-l-[#47f59c] px-4 py-3 backdrop-blur-md shadow-[0_10px_28px_-12px_rgba(71,245,156,0.2)]"
             >
-              {HERO_DATA.summary}
-            </p>
+              <span
+                aria-hidden="true"
+                className="pointer-events-none absolute bottom-1.5 right-1.5 w-2 h-2 border-b border-r border-[#47f59c]/50"
+              />
+              <p className="text-sm leading-relaxed text-zinc-200 sm:text-[15px]">
+                {HERO_DATA.summary}
+              </p>
+            </div>
 
-            {/* Primary Mint Gradient Pill CTA (With Periodic Light Sweep) + Contact Pill */}
+            {/* Primary Mint Gradient Pill CTA + Contact Pill */}
             <div
               style={{ animationDelay: '330ms' }}
-              className="hero-stagger flex flex-wrap items-center gap-4 pt-2"
+              className="hero-stagger flex flex-wrap items-center gap-4 pt-1"
             >
               <a
                 href={HERO_DATA.primaryCta.href}
@@ -255,12 +270,12 @@ export function HeroSection() {
               </a>
             </div>
 
-            {/* Bottom Structured 2-Line Credential & Social Strip */}
+            {/* Bottom Structured 2-Line Social & Credential Strip */}
             <div
               style={{ animationDelay: '420ms' }}
-              className="hero-stagger grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-y-4 pt-6 border-t border-white/[0.08]"
+              className="hero-stagger grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-x-4 sm:gap-x-0 gap-y-4 pt-6 border-t border-white/[0.08]"
             >
-              {SOCIAL_LINKS.map((social, idx) => {
+              {SOCIAL_LINKS.map((social) => {
                 const Icon = SOCIAL_ICON_MAP[social.id];
                 const subtitle = SOCIAL_SUBTITLES[social.id] || 'Profile';
                 return (
@@ -270,7 +285,7 @@ export function HeroSection() {
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={`${social.label} — ${subtitle}`}
-                      className="group flex items-center gap-2.5 pr-4 sm:pr-5 rounded-lg transition-transform duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#47f59c]/60 motion-reduce:transform-none"
+                      className="group flex items-center gap-2.5 sm:pr-5 rounded-lg transition-transform duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#47f59c]/60 motion-reduce:transform-none"
                     >
                       {Icon && (
                         <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-white/[0.04] border border-white/[0.08] text-zinc-200 transition-colors duration-200 group-hover:border-[#47f59c]/40 group-hover:text-[#47f59c] group-hover:bg-[#47f59c]/10">
@@ -289,50 +304,44 @@ export function HeroSection() {
 
                     <span
                       aria-hidden="true"
-                      className={`hidden sm:inline-block w-px h-7 bg-white/[0.1] mr-5 ${
-                        idx === SOCIAL_LINKS.length - 1 ? '' : ''
-                      }`}
+                      className="hidden sm:inline-block w-px h-7 bg-white/[0.1] mr-5"
                     />
                   </div>
                 );
               })}
 
-              {/* Experience Credential */}
-              <div className="flex items-center">
-                <div className="group flex items-center gap-2.5 pr-4 sm:pr-5">
-                  <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-[#47f59c]/[0.08] border border-[#47f59c]/25 text-[#47f59c]">
-                    <ShieldCheck className="w-4 h-4" />
-                  </span>
-                  <div className="flex flex-col leading-tight">
-                    <span className="text-xs font-semibold text-white">
-                      1+ Year
-                    </span>
-                    <span className="text-[11px] text-zinc-400 mt-0.5">
-                      Production Exp.
-                    </span>
+              {HERO_DATA.credentials?.map((cred, idx) => {
+                const CredIcon = CREDENTIAL_ICON_MAP[cred.id] || ShieldCheck;
+                const isLast = idx === HERO_DATA.credentials.length - 1;
+                return (
+                  <div key={cred.id} className="flex items-center">
+                    <div
+                      className={`flex items-center gap-2.5 ${
+                        isLast ? '' : 'sm:pr-5'
+                      }`}
+                    >
+                      <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-[#47f59c]/[0.08] border border-[#47f59c]/25 text-[#47f59c]">
+                        <CredIcon className="w-4 h-4" />
+                      </span>
+                      <div className="flex flex-col leading-tight">
+                        <span className="text-xs font-semibold text-white">
+                          {cred.value}
+                        </span>
+                        <span className="text-[11px] text-zinc-400 mt-0.5">
+                          {cred.label}
+                        </span>
+                      </div>
+                    </div>
+
+                    {!isLast && (
+                      <span
+                        aria-hidden="true"
+                        className="hidden sm:inline-block w-px h-7 bg-white/[0.1] mr-5"
+                      />
+                    )}
                   </div>
-                </div>
-
-                <span
-                  aria-hidden="true"
-                  className="hidden sm:inline-block w-px h-7 bg-white/[0.1] mr-5"
-                />
-              </div>
-
-              {/* Academic Credential */}
-              <div className="group flex items-center gap-2.5">
-                <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-[#47f59c]/[0.08] border border-[#47f59c]/25 text-[#47f59c]">
-                  <GraduationCap className="w-4 h-4" />
-                </span>
-                <div className="flex flex-col leading-tight">
-                  <span className="text-xs font-semibold text-white">
-                    3.73 CGPA
-                  </span>
-                  <span className="text-[11px] text-zinc-400 mt-0.5">
-                    BSCS Honours
-                  </span>
-                </div>
-              </div>
+                );
+              })}
             </div>
           </div>
 

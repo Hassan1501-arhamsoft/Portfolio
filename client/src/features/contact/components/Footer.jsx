@@ -186,7 +186,7 @@ export function Footer() {
               <span className="text-zinc-700">·</span>
               <span className="inline-flex items-center gap-1.5 text-zinc-400">
                 <Radio className="w-3 h-3 text-[#47f59c]" />
-                Engineered with React, Vite & Tailwind CSS
+                Engineered with love 💚
               </span>
             </div>
 

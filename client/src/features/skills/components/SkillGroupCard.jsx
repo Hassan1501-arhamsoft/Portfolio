@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Bot,
   BrainCircuit,
@@ -17,14 +17,13 @@ import {
   Wifi,
   Wrench,
   X,
-} from 'lucide-react';
-import { TechNodeIcon } from '../../../shared/components/TechNodeIcon';
+} from "lucide-react";
+import { TechNodeIcon } from "../../../shared/components/TechNodeIcon";
 
-const HEX_CLIP =
-  'polygon(50% 0%, 95% 25%, 95% 75%, 50% 100%, 5% 75%, 5% 25%)';
+const HEX_CLIP = "polygon(50% 0%, 95% 25%, 95% 75%, 50% 100%, 5% 75%, 5% 25%)";
 
 const CHAMFER_CLIP =
-  'polygon(16px 0%, calc(100% - 16px) 0%, 100% 16px, 100% calc(100% - 16px), calc(100% - 16px) 100%, 16px 100%, 0% calc(100% - 16px), 0% 16px)';
+  "polygon(16px 0%, calc(100% - 16px) 0%, 100% 16px, 100% calc(100% - 16px), calc(100% - 16px) 100%, 16px 100%, 0% calc(100% - 16px), 0% 16px)";
 
 const CATEGORY_ICONS = {
   cpu: Cpu,
@@ -42,8 +41,8 @@ const CATEGORY_ICONS = {
   sparkles: Sparkles,
 };
 
-function CategoryIcon({ iconKey, className = 'w-4 h-4' }) {
-  const normalized = String(iconKey || '').toLowerCase();
+function CategoryIcon({ iconKey, className = "w-4 h-4" }) {
+  const normalized = String(iconKey || "").toLowerCase();
   const IconComponent = CATEGORY_ICONS[normalized] || Cpu;
   return <IconComponent className={className} />;
 }
@@ -60,7 +59,7 @@ function buildSkillWebNodes(skills = []) {
   const outerCount = useDualRing ? total - innerCount : 0;
 
   return skills.map((entry, idx) => {
-    const label = typeof entry === 'string' ? entry : entry.name || entry.label;
+    const label = typeof entry === "string" ? entry : entry.name || entry.label;
     const isInner = !useDualRing || idx < innerCount;
     const ringIndex = isInner ? idx : idx - innerCount;
     const countInRing = isInner ? innerCount : outerCount;
@@ -103,12 +102,12 @@ export function SkillGroupCard({
     const card = cardRef.current;
     if (!card) return;
     const rect = card.getBoundingClientRect();
-    card.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
-    card.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
+    card.style.setProperty("--mouse-x", `${e.clientX - rect.left}px`);
+    card.style.setProperty("--mouse-y", `${e.clientY - rect.top}px`);
   };
 
   const handleKeyDown = (e) => {
-    if (e.key === 'Enter' || e.key === ' ') {
+    if (e.key === "Enter" || e.key === " ") {
       e.preventDefault();
       onSelect?.(category, index);
     }
@@ -134,7 +133,7 @@ export function SkillGroupCard({
       <div
         aria-hidden="true"
         className={`pointer-events-none absolute -inset-1 rounded-2xl bg-[#47f59c]/25 blur-xl transition-opacity duration-500 ${
-          isActive ? 'opacity-95' : 'opacity-0 group-hover:opacity-75'
+          isActive ? "opacity-95" : "opacity-0 group-hover:opacity-75"
         }`}
       />
 
@@ -143,8 +142,8 @@ export function SkillGroupCard({
         style={{ clipPath: CHAMFER_CLIP }}
         className={`relative p-4 sm:p-5 backdrop-blur-2xl transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.03] group-focus-visible:ring-2 group-focus-visible:ring-[#47f59c] motion-reduce:transform-none ${
           isActive
-            ? 'bg-[#0e1813]/95'
-            : 'bg-[#101316]/92 group-hover:bg-[#121916]/95'
+            ? "bg-[#0e1813]/95"
+            : "bg-[#101316]/92 group-hover:bg-[#121916]/95"
         }`}
       >
         {/* Crisp SVG Chamfered Perimeter Border */}
@@ -157,7 +156,7 @@ export function SkillGroupCard({
         >
           <polygon
             points="16,0.75 240,0.75 255.25,16 255.25,148 240,163.25 16,163.25 0.75,148 0.75,16"
-            stroke={isActive ? '#47f59c' : 'rgba(255, 255, 255, 0.14)'}
+            stroke={isActive ? "#47f59c" : "rgba(255, 255, 255, 0.14)"}
             strokeWidth="1.5"
             className="transition-colors duration-300 group-hover:stroke-[#47f59c]/80"
           />
@@ -165,13 +164,13 @@ export function SkillGroupCard({
             points="1,24 1,16 16,1 24,1"
             stroke="#47f59c"
             strokeWidth="2"
-            strokeOpacity={isActive ? '1' : '0.6'}
+            strokeOpacity={isActive ? "1" : "0.6"}
           />
           <polyline
             points="232,163 240,163 255,148 255,140"
             stroke="#47f59c"
             strokeWidth="2"
-            strokeOpacity={isActive ? '1' : '0.6'}
+            strokeOpacity={isActive ? "1" : "0.6"}
           />
         </svg>
 
@@ -181,7 +180,7 @@ export function SkillGroupCard({
           className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100 motion-reduce:hidden"
           style={{
             background:
-              'radial-gradient(240px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(71, 245, 156, 0.16), transparent 60%)',
+              "radial-gradient(240px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(71, 245, 156, 0.16), transparent 60%)",
           }}
         />
 
@@ -217,7 +216,7 @@ export function SkillGroupCard({
         {/* Footer CTA */}
         <div className="relative z-10 mt-3 pt-2.5 border-t border-white/[0.07] flex items-center justify-between gap-2">
           <span className="font-mono text-[10px] text-zinc-400 truncate">
-            {typeof skills[0] === 'string' ? skills[0] : skills[0]?.name}
+            {typeof skills[0] === "string" ? skills[0] : skills[0]?.name}
           </span>
           <span className="shrink-0 font-mono text-[10px] font-semibold tracking-wider uppercase text-[#47f59c] opacity-85 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all">
             Weave →
@@ -242,36 +241,36 @@ export function SkillSpiderNestModal({
     hoverState.forIndex === activeIndex ? hoverState.node : null;
 
   const category =
-    typeof activeIndex === 'number' ? categories[activeIndex] : null;
+    typeof activeIndex === "number" ? categories[activeIndex] : null;
 
   useEffect(() => {
     if (!category) return;
 
     const prevOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
+    document.body.style.overflow = "hidden";
 
     const handleKeyDown = (e) => {
-      if (e.key === 'Escape') onClose?.();
-      if (e.key === 'ArrowRight' && categories.length > 1) {
+      if (e.key === "Escape") onClose?.();
+      if (e.key === "ArrowRight" && categories.length > 1) {
         onSelectIndex?.((activeIndex + 1) % categories.length);
       }
-      if (e.key === 'ArrowLeft' && categories.length > 1) {
+      if (e.key === "ArrowLeft" && categories.length > 1) {
         onSelectIndex?.(
-          (activeIndex - 1 + categories.length) % categories.length
+          (activeIndex - 1 + categories.length) % categories.length,
         );
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener("keydown", handleKeyDown);
     return () => {
       document.body.style.overflow = prevOverflow;
-      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener("keydown", handleKeyDown);
     };
   }, [category, activeIndex, categories.length, onClose, onSelectIndex]);
 
   const webNodes = useMemo(
     () => buildSkillWebNodes(category?.skills || []),
-    [category]
+    [category],
   );
 
   const { innerPolygonPoints, outerPolygonPoints, crossLinks } = useMemo(() => {
@@ -279,7 +278,7 @@ export function SkillSpiderNestModal({
     const outer = webNodes.filter((n) => !n.isInner);
 
     const toPoints = (arr) =>
-      arr.length >= 3 ? arr.map((n) => `${n.x},${n.y}`).join(' ') : '';
+      arr.length >= 3 ? arr.map((n) => `${n.x},${n.y}`).join(" ") : "";
 
     const links = outer
       .map((outNode, idx) => {
@@ -329,46 +328,70 @@ export function SkillSpiderNestModal({
         />
 
         {/* Modal Header */}
-        <div className="flex items-start justify-between gap-3 p-4 sm:p-6 border-b border-white/[0.07]">
-          <div className="flex items-start gap-3 sm:gap-3.5 min-w-0">
-            <div
-              style={{ clipPath: HEX_CLIP }}
-              className="flex items-center justify-center w-10 h-11 sm:w-11 sm:h-12 p-[1.5px] bg-gradient-to-b from-[#47f59c] to-[#10b981] shrink-0 mt-0.5"
-            >
+        <div className="p-4 sm:p-6 border-b border-white/[0.07]">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex items-center gap-3 sm:gap-3.5 min-w-0">
               <div
                 style={{ clipPath: HEX_CLIP }}
-                className="flex items-center justify-center w-full h-full bg-[#090d0b] text-[#47f59c]"
+                className="flex items-center justify-center w-10 h-11 sm:w-11 sm:h-12 p-[1.5px] bg-gradient-to-b from-[#47f59c] to-[#10b981] shrink-0"
               >
-                <CategoryIcon iconKey={category.icon} className="w-5 h-5" />
+                <div
+                  style={{ clipPath: HEX_CLIP }}
+                  className="flex items-center justify-center w-full h-full bg-[#090d0b] text-[#47f59c]"
+                >
+                  <CategoryIcon iconKey={category.icon} className="w-5 h-5" />
+                </div>
+              </div>
+
+              <div className="min-w-0">
+                <span className="font-mono text-[10px] sm:text-[11px] font-semibold tracking-widest uppercase text-[#47f59c]">
+                  Domain Hub {String(activeIndex + 1).padStart(2, "0")} /{" "}
+                  {String(categories.length).padStart(2, "0")}
+                </span>
+
+                <h3 className="text-lg sm:text-2xl font-bold tracking-tight text-white mt-0.5">
+                  {category.title}
+                </h3>
               </div>
             </div>
 
-            <div className="min-w-0">
-              <span className="font-mono text-[10px] sm:text-[11px] font-semibold tracking-widest uppercase text-[#47f59c]">
-                Domain Hub {String(activeIndex + 1).padStart(2, '0')} /{' '}
-                {String(categories.length).padStart(2, '0')}
-              </span>
-
-              <h3 className="text-lg sm:text-2xl font-bold tracking-tight text-white mt-0.5">
-                {category.title}
-              </h3>
-
-              {category.description && (
-                <p className="text-xs sm:text-sm text-zinc-400 mt-1 max-w-2xl">
-                  {category.description}
-                </p>
-              )}
-            </div>
+            <button
+              type="button"
+              onClick={onClose}
+              aria-label="Close skill spider nest"
+              className="shrink-0 p-2 rounded-full text-zinc-400 bg-white/[0.04] border border-white/[0.08] hover:text-[#47f59c] hover:border-[#47f59c]/40 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#47f59c]"
+            >
+              <X className="w-4 h-4" />
+            </button>
           </div>
 
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Close skill spider nest"
-            className="shrink-0 p-2 rounded-full text-zinc-400 bg-white/[0.04] border border-white/[0.08] hover:text-[#47f59c] hover:border-[#47f59c]/40 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#47f59c]"
-          >
-            <X className="w-4 h-4" />
-          </button>
+          {/* Full-Width Telemetry Description Banner */}
+          {category.description && (
+            <div className="relative mt-4 rounded-xl bg-gradient-to-r from-[#0f2419]/85 via-[#0c1411]/90 to-[#090c0b]/90 border border-[#47f59c]/25 border-l-2 border-l-[#47f59c] px-3.5 py-2.5 sm:px-4 sm:py-3 shadow-[0_10px_28px_-10px_rgba(71,245,156,0.22),inset_0_1px_0_0_rgba(255,255,255,0.08)] overflow-hidden">
+              {/* Top Specular Mint Rim */}
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-x-6 top-0 h-px bg-gradient-to-r from-[#47f59c]/65 via-[#7efcc0]/25 to-transparent"
+              />
+
+              {/* Bottom-Right Corner Bracket */}
+              <span
+                aria-hidden="true"
+                className="pointer-events-none absolute bottom-1.5 right-1.5 w-2 h-2 border-b border-r border-[#47f59c]/55"
+              />
+
+              <div className="relative z-10 flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-3">
+                <span className="inline-flex items-center gap-1.5 self-start sm:self-auto shrink-0 px-2 py-0.5 rounded-md font-mono text-[9px] sm:text-[10px] font-semibold tracking-[0.16em] uppercase bg-[#47f59c]/12 text-[#47f59c] border border-[#47f59c]/30">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#47f59c] shadow-[0_0_6px_#47f59c]" />
+                  Domain Brief
+                </span>
+
+                <p className="text-xs sm:text-[14.5px] font-normal tracking-[-0.01em] leading-relaxed text-zinc-100">
+                  {category.description}
+                </p>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Two-Column Body: Core Stack List + Spider Constellation */}
@@ -389,24 +412,22 @@ export function SkillSpiderNestModal({
                   <li key={`list-${node.label}`}>
                     <button
                       type="button"
-                      onClick={() =>
-                        setActiveNode(isLit ? null : node.index)
-                      }
+                      onClick={() => setActiveNode(isLit ? null : node.index)}
                       onMouseEnter={() => setActiveNode(node.index)}
                       onMouseLeave={() => setActiveNode(null)}
                       onFocus={() => setActiveNode(node.index)}
                       onBlur={() => setActiveNode(null)}
                       className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl border text-left font-mono text-xs transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#47f59c] ${
                         isLit
-                          ? 'bg-[#0f2419]/90 border-[#47f59c] text-white shadow-[0_0_20px_rgba(71,245,156,0.28)]'
-                          : 'bg-white/[0.025] border-white/[0.07] text-zinc-200 hover:border-[#47f59c]/45'
+                          ? "bg-[#0f2419]/90 border-[#47f59c] text-white shadow-[0_0_20px_rgba(71,245,156,0.28)]"
+                          : "bg-white/[0.025] border-white/[0.07] text-zinc-200 hover:border-[#47f59c]/45"
                       }`}
                     >
                       <span
                         className={`flex items-center justify-center w-7 h-7 rounded-lg border shrink-0 transition-colors ${
                           isLit
-                            ? 'bg-[#47f59c]/15 border-[#47f59c]/60 text-[#7efcc0]'
-                            : 'bg-[#0a0f0d] border-white/[0.08] text-[#47f59c]'
+                            ? "bg-[#47f59c]/15 border-[#47f59c]/60 text-[#7efcc0]"
+                            : "bg-[#0a0f0d] border-white/[0.08] text-[#47f59c]"
                         }`}
                       >
                         <TechNodeIcon
@@ -426,11 +447,13 @@ export function SkillSpiderNestModal({
           <div className="lg:col-span-7 flex flex-col">
             <div className="flex items-center justify-between gap-2 mb-2.5">
               <span className="font-mono text-[11px] font-semibold tracking-[0.14em] uppercase text-zinc-400">
-                Skill Constellation ({webNodes.length} Nodes)
+                Skill Constellation 
               </span>
               <span className="font-mono text-[10px] text-[#47f59c] shrink-0">
-                <span className="sm:hidden">Tap nodes</span>
-                <span className="hidden sm:inline">Hover nodes to trace silk</span>
+                <span className="sm:hidden">Tap to trace node connections</span>
+                <span className="hidden sm:inline">
+                  Hover to trace node connections
+                </span>
               </span>
             </div>
 
@@ -499,10 +522,10 @@ export function SkillSpiderNestModal({
                       y2={link.to.y}
                       stroke={
                         isLit
-                          ? 'rgba(71, 245, 156, 0.75)'
-                          : 'rgba(255, 255, 255, 0.11)'
+                          ? "rgba(71, 245, 156, 0.75)"
+                          : "rgba(255, 255, 255, 0.11)"
                       }
-                      strokeWidth={isLit ? '0.55' : '0.32'}
+                      strokeWidth={isLit ? "0.55" : "0.32"}
                       className="transition-all duration-300"
                     />
                   );
@@ -519,12 +542,12 @@ export function SkillSpiderNestModal({
                       y2={node.y}
                       stroke={
                         isLit
-                          ? '#47f59c'
+                          ? "#47f59c"
                           : node.isInner
-                          ? 'rgba(71, 245, 156, 0.48)'
-                          : 'rgba(71, 245, 156, 0.28)'
+                            ? "rgba(71, 245, 156, 0.48)"
+                            : "rgba(71, 245, 156, 0.28)"
                       }
-                      strokeWidth={isLit ? '0.75' : '0.42'}
+                      strokeWidth={isLit ? "0.75" : "0.42"}
                       className="transition-all duration-300"
                     />
                   );
@@ -561,17 +584,17 @@ export function SkillSpiderNestModal({
                     onBlur={() => setActiveNode(null)}
                     className={`absolute -translate-x-1/2 -translate-y-1/2 z-20 flex items-center gap-1 sm:gap-1.5 max-w-[112px] sm:max-w-[165px] px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-full font-mono text-[9px] sm:text-[11px] font-medium border backdrop-blur-xl transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#47f59c] ${
                       isLit
-                        ? 'z-30 scale-105 bg-[#0f2419]/95 text-white border-[#47f59c] shadow-[0_0_22px_rgba(71,245,156,0.6),inset_0_1px_0_rgba(255,255,255,0.3)]'
+                        ? "z-30 scale-105 bg-[#0f2419]/95 text-white border-[#47f59c] shadow-[0_0_22px_rgba(71,245,156,0.6),inset_0_1px_0_rgba(255,255,255,0.3)]"
                         : node.isInner
-                        ? 'bg-[#121619]/95 text-zinc-100 border-[#47f59c]/40 shadow-[0_8px_20px_rgba(0,0,0,0.85)] hover:border-[#47f59c]'
-                        : 'bg-[#111316]/90 text-zinc-200 border-white/[0.15] shadow-[0_8px_20px_rgba(0,0,0,0.85)] hover:border-[#47f59c]/70'
+                          ? "bg-[#121619]/95 text-zinc-100 border-[#47f59c]/40 shadow-[0_8px_20px_rgba(0,0,0,0.85)] hover:border-[#47f59c]"
+                          : "bg-[#111316]/90 text-zinc-200 border-white/[0.15] shadow-[0_8px_20px_rgba(0,0,0,0.85)] hover:border-[#47f59c]/70"
                     }`}
                   >
                     <span
                       className={`flex items-center justify-center shrink-0 transition-transform duration-300 ${
                         isLit
-                          ? 'text-[#7efcc0] scale-110 drop-shadow-[0_0_6px_rgba(71,245,156,0.75)]'
-                          : 'text-[#47f59c]'
+                          ? "text-[#7efcc0] scale-110 drop-shadow-[0_0_6px_rgba(71,245,156,0.75)]"
+                          : "text-[#47f59c]"
                       }`}
                     >
                       <TechNodeIcon
@@ -594,7 +617,7 @@ export function SkillSpiderNestModal({
               type="button"
               onClick={() =>
                 onSelectIndex?.(
-                  (activeIndex - 1 + categories.length) % categories.length
+                  (activeIndex - 1 + categories.length) % categories.length,
                 )
               }
               aria-label="Previous skill domain"
@@ -626,11 +649,11 @@ export function SkillSpiderNestModal({
                 onClick={() => onSelectIndex?.(idx)}
                 className={`px-2.5 py-1 rounded-full font-mono text-[11px] transition-all ${
                   idx === activeIndex
-                    ? 'bg-[#47f59c] text-zinc-950 font-semibold shadow-[0_0_16px_rgba(71,245,156,0.45)]'
-                    : 'bg-white/[0.04] text-zinc-400 border border-white/[0.08] hover:text-white'
+                    ? "bg-[#47f59c] text-zinc-950 font-semibold shadow-[0_0_16px_rgba(71,245,156,0.45)]"
+                    : "bg-white/[0.04] text-zinc-400 border border-white/[0.08] hover:text-white"
                 }`}
               >
-                {String(idx + 1).padStart(2, '0')}
+                {String(idx + 1).padStart(2, "0")}
               </button>
             ))}
           </div>
