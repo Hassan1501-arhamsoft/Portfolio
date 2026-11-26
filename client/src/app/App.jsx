@@ -3,6 +3,12 @@ import { Navbar } from '../features/navigation/components/Navbar';
 import { HeroSection } from '../features/hero/components/HeroSection';
 import { WallCrackIntro } from '../shared/components/WallCrackIntro';
 
+const CustomCursor = lazy(() =>
+  import('../shared/components/CustomCursor').then((m) => ({
+    default: m.CustomCursor,
+  }))
+);
+
 const SkillsSection = lazy(() =>
   import('../features/skills/components/SkillsSection').then((m) => ({
     default: m.SkillsSection,
@@ -57,6 +63,7 @@ export default function App() {
         </Suspense>
       </main>
       <Suspense fallback={null}>
+        <CustomCursor hideNativeCursor={true} />
         <Footer />
       </Suspense>
     </div>

@@ -61,7 +61,7 @@ function buildAchievementWebNodes(skills = []) {
 }
 
 /**
- * Chamfered Octagonal Achievement / Certification Pod
+ * Chamfered Octagonal Achievement / Certification Pod with Visual Proof Preview
  */
 export function AchievementCard({
   item,
@@ -72,12 +72,14 @@ export function AchievementCard({
 }) {
   const cardRef = useRef(null);
   const preloadedRef = useRef(false);
+  const [thumbFailed, setThumbFailed] = useState(false);
   const skillList = item.skills || [];
 
   const preloadImage = () => {
     if (preloadedRef.current || !item.image) return;
     preloadedRef.current = true;
     const img = new Image();
+    img.decoding = "async";
     img.src = item.image;
   };
 
@@ -116,7 +118,7 @@ export function AchievementCard({
         onHoverChange?.(index);
       }}
       onBlur={() => onHoverChange?.(null)}
-      className="group relative w-full cursor-pointer select-none focus-visible:outline-none"
+      className="group relative flex w-full cursor-pointer select-none focus-visible:outline-none"
     >
       {/* Outer Ambient Mint Glow */}
       <div
@@ -129,7 +131,7 @@ export function AchievementCard({
       {/* Chamfered Octagon Pod Body */}
       <div
         style={{ clipPath: CHAMFER_CLIP }}
-        className={`relative p-5 backdrop-blur-2xl transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.02] group-focus-visible:ring-2 group-focus-visible:ring-[#47f59c] motion-reduce:transform-none ${
+        className={`relative flex flex-col w-full p-5 backdrop-blur-2xl transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.02] group-focus-visible:ring-2 group-focus-visible:ring-[#47f59c] motion-reduce:transform-none ${
           isActive
             ? "bg-[#0e1713]/95"
             : "bg-[#101316]/92 group-hover:bg-[#121916]/95"
@@ -138,13 +140,13 @@ export function AchievementCard({
         {/* Crisp SVG Chamfered Perimeter Border */}
         <svg
           aria-hidden="true"
-          viewBox="0 0 320 220"
+          viewBox="0 0 320 340"
           preserveAspectRatio="none"
           fill="none"
           className="pointer-events-none absolute inset-0 w-full h-full"
         >
           <polygon
-            points="16,0.75 304,0.75 319.25,16 319.25,204 304,219.25 16,219.25 0.75,204 0.75,16"
+            points="16,0.75 304,0.75 319.25,16 319.25,324 304,339.25 16,339.25 0.75,324 0.75,16"
             stroke={
               isActive
                 ? "#47f59c"
@@ -162,7 +164,7 @@ export function AchievementCard({
             strokeOpacity={isActive || item.featured ? "1" : "0.55"}
           />
           <polyline
-            points="296,219 304,219 319,204 319,196"
+            points="296,339 304,339 319,324 319,316"
             stroke="#47f59c"
             strokeWidth="1.8"
             strokeOpacity={isActive || item.featured ? "1" : "0.55"}
@@ -207,6 +209,41 @@ export function AchievementCard({
           )}
         </div>
 
+        {/* Certificate / Award Visual Proof Preview */}
+        {item.image && !thumbFailed && (
+          <div className="relative z-10 mb-3.5 aspect-[16/9] w-full rounded-xl overflow-hidden bg-[#060807] border border-white/[0.09] group-hover:border-[#47f59c]/40 transition-colors">
+            <span
+              aria-hidden="true"
+              className="pointer-events-none absolute top-2 left-2 z-20 w-2 h-2 border-t border-l border-[#47f59c]/80"
+            />
+            <span
+              aria-hidden="true"
+              className="pointer-events-none absolute bottom-2 right-2 z-20 w-2 h-2 border-b border-r border-[#47f59c]/80"
+            />
+
+            <img
+              src={item.image}
+              alt={`${item.title} credential preview`}
+              width="800"
+              height="450"
+              loading="lazy"
+              decoding="async"
+              onError={() => setThumbFailed(true)}
+              className="w-full h-full object-cover object-top transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.04] motion-reduce:transform-none"
+            />
+
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#101316]/90 via-[#101316]/15 to-transparent"
+            />
+
+            <span className="pointer-events-none absolute bottom-2 right-2.5 inline-flex items-center gap-1 px-2 py-0.5 rounded-full font-mono text-[9px] font-medium uppercase tracking-wider text-[#7efcc0] bg-[#060807]/85 border border-[#47f59c]/30 backdrop-blur-md">
+              <Maximize2 className="w-2.5 h-2.5 text-[#47f59c]" />
+              <span>Preview</span>
+            </span>
+          </div>
+        )}
+
         {/* Title & Issuing Authority */}
         <h3 className="relative z-10 text-base sm:text-[17px] font-bold tracking-tight text-white leading-snug line-clamp-1 group-hover:text-[#7efcc0] transition-colors">
           {item.title}
@@ -221,7 +258,7 @@ export function AchievementCard({
         </p>
 
         {/* Footer: Validated Nodes + Inspect Proof Prompt */}
-        <div className="relative z-10 mt-4 pt-3 border-t border-white/[0.07] flex items-center justify-between gap-2">
+        <div className="relative z-10 mt-auto pt-3 border-t border-white/[0.07] flex items-center justify-between gap-2">
           <div className="flex items-center gap-1.5 font-mono text-[10px] text-zinc-300 truncate">
             <span className="w-1.5 h-1.5 rounded-full bg-[#47f59c] shrink-0 shadow-[0_0_6px_#47f59c]" />
             <span className="truncate">{skillList[0] || "Verified"}</span>
@@ -485,7 +522,7 @@ export function AchievementSpiderNestModal({
                       loading="lazy"
                       decoding="async"
                       onError={() => setFailedImageIndex(activeIndex)}
-                      className="w-full h-full object-cover object-center transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover/img:scale-[1.03]"
+                      className="w-full h-full object-cover object-top transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover/img:scale-[1.03]"
                     />
                     <div
                       aria-hidden="true"
@@ -774,6 +811,10 @@ export function AchievementSpiderNestModal({
               <img
                 src={item.image}
                 alt={`${item.title} fullscreen view`}
+                width="1600"
+                height="900"
+                loading="lazy"
+                decoding="async"
                 className="w-full max-h-[80vh] object-contain bg-[#060708]"
               />
             </div>

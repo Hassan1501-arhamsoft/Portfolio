@@ -1,55 +1,42 @@
-/* Tailwind v4 syntax (if using Tailwind v3, replace with @tailwind base; @tailwind components; @tailwind utilities;) */
 @import "tailwindcss";
+
+@theme {
+  --font-sans: 'Futura PT', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-display: 'Futura PT', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
 
 :root {
   --bg-primary: #060708;
   --bg-surface: #0d1012;
   --bg-surface-elevated: #111316;
   --border-subtle: rgba(255, 255, 255, 0.08);
-  --accent-primary: #47f59c;   /* Electric Mint */
-  --accent-secondary: #10b981; /* Emerald 500 */
+  --accent-primary: #47f59c;
+  --accent-secondary: #10b981;
   --text-primary: #fafafa;
   --text-muted: #a1a1aa;
 }
 
-html,
-body {
-  min-height: 100%;
-  scroll-behavior: smooth;
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
-  color-scheme: dark;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-::selection {
-  background-color: rgba(71, 245, 156, 0.24);
-  color: #ffffff;
-}
-
-@media (prefers-reduced-motion: reduce) {
+@layer base {
   html,
   body {
-    scroll-behavior: auto;
+    min-height: 100%;
+    scroll-behavior: smooth;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 1.65;
+    color-scheme: dark;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
-}
 
-/* Prevents sticky floating navbar from overlapping anchored sections */
-section[id] {
-  scroll-margin-top: 6rem;
-}
-
-/* Unified Obsidian Glass Surface (keeps un-migrated cards matching #060708) */
-.surface-card {
-  background: linear-gradient(
-    180deg,
-    rgba(20, 23, 27, 0.82) 0%,
-    rgba(13, 16, 18, 0.94) 100%
-  );
-  border: 1px solid var(--border-subtle);
-  box-shadow:
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.08),
-    0 20px 40px -15px rgba(0, 0, 0, 0.85);
-  backdrop-filter: blur(20px);
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    line-height: 1.15;
+  }
 }

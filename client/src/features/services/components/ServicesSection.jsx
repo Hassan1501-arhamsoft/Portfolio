@@ -181,7 +181,7 @@ export function ServicesSection() {
       <div className="relative z-10 max-w-6xl px-6 mx-auto">
         <SectionHeader
           eyebrow="Capabilities & Scope"
-          title="Engineering Services"
+          title="What I Build"
           subtitle="Click any orbiting service pod to weave its deliverables spider-nest and explore production implementation scope."
         />
 

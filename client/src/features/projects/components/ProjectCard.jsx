@@ -11,7 +11,6 @@ import {
   X,
 } from "lucide-react";
 import { GitHubIcon } from "../../../shared/components/SocialIcons";
-// 1. Add this import at the top of ProjectCard.jsx:
 import { TechNodeIcon } from "../../../shared/components/TechNodeIcon";
 
 const HEX_CLIP = "polygon(50% 0%, 95% 25%, 95% 75%, 50% 100%, 5% 75%, 5% 25%)";
@@ -24,7 +23,6 @@ const CHAMFER_CLIP =
  * Computes non-overlapping elliptical polar coordinates (in % of container)
  * across 1 or 2 concentric web rings for project tech-stack nodes.
  */
-// 2. Update buildProjectWebNodes radii so icon + text pills never clip at container walls:
 function buildProjectWebNodes(stack = []) {
   const total = stack.length;
   if (total === 0) return [];
@@ -59,7 +57,7 @@ function buildProjectWebNodes(stack = []) {
 }
 
 /**
- * Chamfered Octagonal Orbital Project Pod
+ * Chamfered Octagonal Orbital Project Pod with Compact Visual Strip
  */
 export function ProjectCard({
   project,
@@ -69,8 +67,19 @@ export function ProjectCard({
   onHoverChange,
 }) {
   const cardRef = useRef(null);
+  const preloadedRef = useRef(false);
+  const [thumbFailed, setThumbFailed] = useState(false);
+
   const stackList = project.stack || [];
   const archCount = project.architecture?.length || 0;
+
+  const preloadProjectImage = () => {
+    if (preloadedRef.current || !project.image) return;
+    preloadedRef.current = true;
+    const img = new Image();
+    img.decoding = "async";
+    img.src = project.image;
+  };
 
   const handleMouseMove = (e) => {
     const card = cardRef.current;
@@ -85,15 +94,6 @@ export function ProjectCard({
       e.preventDefault();
       onSelect?.(project, index);
     }
-  };
-  // Inside ProjectCard in src/features/projects/components/ProjectCard.jsx
-  const preloadedRef = useRef(false);
-
-  const preloadProjectImage = () => {
-    if (preloadedRef.current || !project.image) return;
-    preloadedRef.current = true;
-    const img = new Image();
-    img.src = project.image;
   };
 
   return (
@@ -129,7 +129,7 @@ export function ProjectCard({
       {/* Chamfered Octagon Pod Body */}
       <div
         style={{ clipPath: CHAMFER_CLIP }}
-        className={`relative p-4 sm:p-5 backdrop-blur-2xl transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.03] group-focus-visible:ring-2 group-focus-visible:ring-[#47f59c] motion-reduce:transform-none ${
+        className={`relative p-3.5 sm:p-4 backdrop-blur-2xl transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.03] group-focus-visible:ring-2 group-focus-visible:ring-[#47f59c] motion-reduce:transform-none ${
           isActive
             ? "bg-[#0e1713]/95"
             : "bg-[#101316]/92 group-hover:bg-[#121916]/95"
@@ -181,13 +181,12 @@ export function ProjectCard({
         />
 
         {/* Top Row: Category Tag + Direct External Links */}
-        <div className="relative z-10 flex items-center justify-between gap-2 mb-3">
+        <div className="relative z-10 flex items-center justify-between gap-2 mb-2.5">
           <span className="inline-flex items-center gap-1.5 px-2 py-0.5 font-mono text-[10px] font-medium tracking-wider uppercase rounded-full bg-[#47f59c]/10 text-[#47f59c] border border-[#47f59c]/30 truncate">
             <Layers className="w-2.5 h-2.5 shrink-0" />
             <span className="truncate">{project.category}</span>
           </span>
 
-          {/* Direct Action Links (stopPropagation prevents opening modal when clicking links) */}
           <div className="flex items-center gap-1.5 shrink-0">
             {project.repoUrl && (
               <a
@@ -220,6 +219,30 @@ export function ProjectCard({
           </div>
         </div>
 
+        {/* Compact Visual Preview Banner (Keeps Orbital Ring Compact) */}
+        {project.image && !thumbFailed && (
+          <div className="relative z-10 mb-2.5 h-16 sm:h-20 w-full rounded-lg overflow-hidden bg-[#060807] border border-white/[0.08] group-hover:border-[#47f59c]/35 transition-colors">
+            <img
+              src={project.image}
+              alt={`${project.title} screenshot`}
+              width="640"
+              height="360"
+              loading="lazy"
+              decoding="async"
+              onError={() => setThumbFailed(true)}
+              className="w-full h-full object-cover object-center transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-105 motion-reduce:transform-none"
+            />
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#101316]/85 via-[#101316]/20 to-transparent"
+            />
+            <span className="pointer-events-none absolute bottom-1.5 right-1.5 inline-flex items-center gap-1 px-1.5 py-0.5 rounded font-mono text-[9px] font-medium uppercase tracking-wider text-[#7efcc0] bg-[#060807]/85 border border-[#47f59c]/25">
+              <Maximize2 className="w-2.5 h-2.5 text-[#47f59c]" />
+              <span>Preview</span>
+            </span>
+          </div>
+        )}
+
         {/* Project Title & 1-Line Summary */}
         <h3 className="relative z-10 text-sm sm:text-[15px] font-semibold tracking-tight text-white leading-snug line-clamp-1 group-hover:text-[#7efcc0] transition-colors">
           {project.title}
@@ -230,7 +253,7 @@ export function ProjectCard({
         </p>
 
         {/* Bottom Metadata & Weave Prompt */}
-        <div className="relative z-10 mt-3 pt-2.5 border-t border-white/[0.07] flex items-center justify-between gap-2">
+        <div className="relative z-10 mt-2.5 pt-2 border-t border-white/[0.07] flex items-center justify-between gap-2">
           <div className="flex items-center gap-1.5 font-mono text-[10px] text-zinc-300 truncate">
             <span className="w-1.5 h-1.5 rounded-full bg-[#47f59c] shrink-0 shadow-[0_0_6px_#47f59c]" />
             <span className="truncate">
@@ -470,12 +493,10 @@ export function ProjectSpiderNestModal({
 
         {/* Two-Column Body: Visual Preview + Architecture Specs + Interactive Stack Spider-Web */}
         <div className="grid lg:grid-cols-12 gap-6 p-5 sm:p-6">
-          {/* Left Column: Project Image Preview, Summary & System Architecture */}
+          {/* Left Column: Project Image Preview & System Architecture */}
           <div className="lg:col-span-6 flex flex-col space-y-4">
-            {/* Project Visual Preview Frame */}
             {project.image && (
               <div className="relative rounded-2xl overflow-hidden bg-[#060807] border border-[#47f59c]/25 shadow-[inset_0_0_24px_rgba(71,245,156,0.05)]">
-                {/* Corner Mint Ticks */}
                 <span
                   aria-hidden="true"
                   className="pointer-events-none absolute top-2 left-2 z-20 w-2.5 h-2.5 border-t border-l border-[#47f59c]/80"
@@ -525,10 +546,6 @@ export function ProjectSpiderNestModal({
               </div>
             )}
 
-            <p className="text-sm leading-relaxed text-zinc-300">
-              {project.summary}
-            </p>
-
             {project.architecture?.length > 0 && (
               <div>
                 <div className="flex items-center gap-2 mb-2.5">
@@ -567,13 +584,11 @@ export function ProjectSpiderNestModal({
             </div>
 
             <div className="relative w-full min-h-[20rem] sm:min-h-[24rem] flex-1 rounded-2xl bg-[#060807] border border-[#47f59c]/20 shadow-[inset_0_0_40px_rgba(71,245,156,0.06)] overflow-hidden">
-              {/* Radial Center Glow */}
               <div
                 aria-hidden="true"
                 className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 rounded-full bg-[#47f59c]/[0.15] blur-2xl"
               />
 
-              {/* Spider-Web SVG Silk Geometry */}
               <svg
                 aria-hidden="true"
                 viewBox="0 0 100 100"

@@ -9,10 +9,23 @@ import {
   AchievementCard,
   AchievementSpiderNestModal,
 } from './AchievementCard';
+import { AchievementFilter } from './AchievementFilter';
 
 export function AchievementsSection() {
   const [activeCategory, setActiveCategory] = useState('All');
   const [selectedIndex, setSelectedIndex] = useState(null);
+
+  const categoryCounts = useMemo(() => {
+    const counts = { All: ACHIEVEMENTS_DATA.length };
+    ACHIEVEMENT_CATEGORIES.forEach((cat) => {
+      if (cat !== 'All') {
+        counts[cat] = ACHIEVEMENTS_DATA.filter(
+          (item) => item.category === cat
+        ).length;
+      }
+    });
+    return counts;
+  }, []);
 
   const filteredItems = useMemo(() => {
     if (activeCategory === 'All') return ACHIEVEMENTS_DATA;
@@ -20,6 +33,12 @@ export function AchievementsSection() {
       (item) => item.category === activeCategory
     );
   }, [activeCategory]);
+
+  const handleSelectCategory = (category) => {
+    if (category === activeCategory) return;
+    setSelectedIndex(null);
+    setActiveCategory(category);
+  };
 
   return (
     <section
@@ -59,35 +78,13 @@ export function AchievementsSection() {
           subtitle="National academic merit honors and international technical certifications—click any pod to inspect visual proof."
         />
 
-        {/* Category Filter Tabs */}
-        <div
-          role="tablist"
-          aria-label="Filter achievements and certifications"
-          className="flex flex-wrap items-center justify-center gap-2 mb-12"
-        >
-          {ACHIEVEMENT_CATEGORIES.map((category) => {
-            const isSelected = activeCategory === category;
-            return (
-              <button
-                key={category}
-                type="button"
-                role="tab"
-                aria-selected={isSelected}
-                onClick={() => {
-                  setActiveCategory(category);
-                  setSelectedIndex(null);
-                }}
-                className={`px-4 py-1.5 rounded-full font-mono text-xs font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#47f59c] ${
-                  isSelected
-                    ? 'bg-[#47f59c] text-zinc-950 font-semibold shadow-[0_0_20px_rgba(71,245,156,0.45)]'
-                    : 'bg-white/[0.03] text-zinc-300 border border-white/[0.08] hover:border-[#47f59c]/45 hover:text-white'
-                }`}
-              >
-                {category}
-              </button>
-            );
-          })}
-        </div>
+        {/* Liquid Glass Domain Filter Dock */}
+        <AchievementFilter
+          categories={ACHIEVEMENT_CATEGORIES}
+          activeCategory={activeCategory}
+          onSelectCategory={handleSelectCategory}
+          counts={categoryCounts}
+        />
 
         {/* Chamfered Octagonal Cards Grid */}
         <div className="grid gap-6 md:grid-cols-2 max-w-4xl mx-auto">

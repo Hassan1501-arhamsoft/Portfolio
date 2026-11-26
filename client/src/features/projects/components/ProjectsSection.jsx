@@ -39,6 +39,15 @@ export function ProjectsSection() {
     return PROJECTS.filter((project) => project.category === activeCategory);
   }, [activeCategory]);
 
+  // Clear stale DOM refs whenever the filtered project list changes
+  useEffect(() => {
+    const len = filteredProjects.length;
+    cardWrapperRefs.current.length = len;
+    lineRefs.current.length = len;
+    hubNodeRefs.current.length = len;
+    pulseDotRefs.current.length = len;
+  }, [filteredProjects]);
+
   // Dynamic unique tech count for the currently visible builds
   const visibleUniqueTechCount = useMemo(() => {
     const unique = new Set();
@@ -53,7 +62,7 @@ export function ProjectsSection() {
     setActiveCategory(category);
   };
 
-  // Smooth 60fps Orbital Engine: adapts dynamically to filteredProjects.length
+  // Smooth Orbital Engine: adapts radii & stagger to build count and viewport size
   useEffect(() => {
     const stageEl = stageRef.current;
     if (!stageEl) return;
@@ -67,8 +76,7 @@ export function ProjectsSection() {
 
     let rafId = null;
     let isInViewport = true;
-    // Pause rotation when only 1 build is displayed so it stays anchored cleanly beside the hub
-    const baseSpeed = prefersReducedMotion || count === 1 ? 0 : -0.15;
+    const baseSpeed = prefersReducedMotion || count === 1 ? 0 : -0.13;
     let angleOffset = count === 1 ? 0 : -Math.PI / 6;
     let currentSpeed = baseSpeed;
     let lastTime = performance.now();
@@ -82,19 +90,49 @@ export function ProjectsSection() {
       const cx = width / 2;
       const cy = height / 2;
 
-      const rxFactor = count === 1 ? 0.27 : count > 4 ? 0.37 : 0.34;
-      const ryFactor = count > 4 ? 0.35 : 0.32;
-      const rx = Math.min(
-        width * rxFactor,
-        count === 1 ? 265 : count > 4 ? 395 : 365
-      );
-      const ry = Math.min(height * ryFactor, count > 4 ? 255 : 230);
-      const hubRadius = width >= 1024 ? 86 : 74;
+      const isLargeDesktop = width >= 1152;
+      const maxRx =
+        count === 1
+          ? 275
+          : count > 8
+            ? isLargeDesktop
+              ? 465
+              : 415
+            : count > 4
+              ? isLargeDesktop
+                ? 425
+                : 380
+              : 365;
+
+      const maxRy =
+        count === 1
+          ? 220
+          : count > 8
+            ? isLargeDesktop
+              ? 325
+              : 295
+            : count > 4
+              ? isLargeDesktop
+                ? 285
+                : 255
+              : 235;
+
+      const rxFactor = count === 1 ? 0.28 : count > 8 ? 0.41 : count > 4 ? 0.39 : 0.35;
+      const ryFactor = count > 8 ? 0.39 : count > 4 ? 0.36 : 0.33;
+
+      const baseRx = Math.min(width * rxFactor, maxRx);
+      const baseRy = Math.min(height * ryFactor, maxRy);
+      const hubRadius = width >= 1024 ? 88 : 76;
 
       for (let i = 0; i < count; i++) {
         const theta = angleOffset + (i * Math.PI * 2) / count;
         const cos = Math.cos(theta);
         const sin = Math.sin(theta);
+
+        // Subtle radial stagger on large orbits prevents adjacent cards from colliding
+        const stagger = count > 7 && i % 2 === 1 ? 24 : 0;
+        const rx = baseRx + stagger;
+        const ry = baseRy + stagger * 0.72;
 
         const cardX = cx + cos * rx;
         const cardY = cy + sin * ry;
@@ -125,7 +163,7 @@ export function ProjectsSection() {
 
         const pulseEl = pulseDotRefs.current[i];
         if (pulseEl) {
-          const t = (timeMs * 0.0005 + i * 0.2) % 1;
+          const t = (timeMs * 0.00045 + i * 0.2) % 1;
           const px = startX + (cardX - startX) * t;
           const py = startY + (cardY - startY) * t;
           pulseEl.setAttribute('cx', px.toFixed(1));
@@ -175,6 +213,7 @@ export function ProjectsSection() {
     typeof hoveredIndex === 'number' ? filteredProjects[hoveredIndex] : null;
 
   const isDenseOrbit = filteredProjects.length > 4;
+  const isLargeOrbit = filteredProjects.length > 8;
 
   return (
     <section
@@ -210,7 +249,7 @@ export function ProjectsSection() {
       <div className="relative z-10 max-w-6xl px-6 mx-auto">
         <SectionHeader
           eyebrow="Shipped Systems"
-          title="Featured Engineering Builds"
+          title="Production Showcase"
           subtitle="Filter by engineering domain or click any build to inspect its system architecture and technology spider-nest."
         />
 
@@ -222,23 +261,25 @@ export function ProjectsSection() {
           counts={categoryCounts}
         />
 
-        {/* DESKTOP & TABLET: Smooth Circular Orbit Stage with Connected Tether Lines */}
+        {/* DESKTOP: Smooth Circular Orbit Stage with Connected Tether Lines */}
         <div
           ref={stageRef}
-          className={`relative hidden md:block w-full mx-auto transition-[height] duration-300 ${
-            isDenseOrbit
-              ? 'h-[42rem] lg:h-[46rem]'
-              : 'h-[34rem] lg:h-[38rem]'
+          className={`relative hidden lg:block w-full mx-auto transition-[height] duration-300 ${
+            isLargeOrbit
+              ? 'h-[56rem] xl:h-[60rem]'
+              : isDenseOrbit
+                ? 'h-[46rem] xl:h-[50rem]'
+                : 'h-[36rem] xl:h-[40rem]'
           }`}
         >
           {/* Ambient Orbital Halo Rings */}
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[38rem] h-[24rem] lg:w-[48rem] lg:h-[30rem] rounded-full border border-dashed border-[#47f59c]/15"
+            className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[46rem] h-[32rem] xl:w-[54rem] xl:h-[36rem] rounded-full border border-dashed border-[#47f59c]/15"
           />
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[23rem] h-[15rem] lg:w-[29rem] lg:h-[19rem] rounded-full border border-white/[0.05]"
+            className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[26rem] h-[18rem] xl:w-[32rem] xl:h-[22rem] rounded-full border border-white/[0.05]"
           />
 
           {/* Dynamic SVG Tether Lines Connecting Central Circle to Each Orbiting Project */}
@@ -246,22 +287,6 @@ export function ProjectsSection() {
             aria-hidden="true"
             className="pointer-events-none absolute inset-0 w-full h-full z-10"
           >
-            <defs>
-              <filter
-                id="projectMintLineGlow"
-                x="-20%"
-                y="-20%"
-                width="140%"
-                height="140%"
-              >
-                <feGaussianBlur stdDeviation="2.5" result="blur" />
-                <feMerge>
-                  <feMergeNode in="blur" />
-                  <feMergeNode in="SourceGraphic" />
-                </feMerge>
-              </filter>
-            </defs>
-
             {filteredProjects.map((project, idx) => {
               const isHighlighted =
                 hoveredIndex === idx || selectedIndex === idx;
@@ -278,9 +303,6 @@ export function ProjectsSection() {
                     }
                     strokeWidth={isHighlighted ? '2' : '1.25'}
                     strokeDasharray={isHighlighted ? 'none' : '4 4'}
-                    filter={
-                      isHighlighted ? 'url(#projectMintLineGlow)' : undefined
-                    }
                     className="transition-colors duration-300"
                   />
 
@@ -290,7 +312,6 @@ export function ProjectsSection() {
                     }}
                     r={isHighlighted ? '3.2' : '2.2'}
                     fill="#47f59c"
-                    filter="url(#projectMintLineGlow)"
                   />
 
                   <circle
@@ -308,7 +329,7 @@ export function ProjectsSection() {
           </svg>
 
           {/* Central Core Hub Circle */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 flex items-center justify-center w-36 h-36 lg:w-44 lg:h-44 rounded-full bg-[#0b0f0d]/95 backdrop-blur-2xl border border-[#47f59c]/45 shadow-[0_0_60px_-8px_rgba(71,245,156,0.35),inset_0_1px_1px_rgba(255,255,255,0.2)]">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 flex items-center justify-center w-36 h-36 xl:w-44 xl:h-44 rounded-full bg-[#0b0f0d]/95 backdrop-blur-2xl border border-[#47f59c]/45 shadow-[0_0_60px_-8px_rgba(71,245,156,0.35),inset_0_1px_1px_rgba(255,255,255,0.2)]">
             <div
               aria-hidden="true"
               className="pointer-events-none absolute -inset-2.5 rounded-full border border-dashed border-[#47f59c]/35 animate-[spin_26s_linear_infinite_reverse] motion-reduce:animate-none"
@@ -341,7 +362,7 @@ export function ProjectsSection() {
                 </>
               ) : (
                 <>
-                  <span className="text-lg lg:text-xl font-bold tracking-tight text-white leading-none">
+                  <span className="text-lg xl:text-xl font-bold tracking-tight text-white leading-none">
                     {filteredProjects.length}{' '}
                     {filteredProjects.length === 1 ? 'Build' : 'Builds'}
                   </span>
@@ -364,9 +385,11 @@ export function ProjectsSection() {
                 cardWrapperRefs.current[index] = el;
               }}
               className={`absolute top-0 left-0 z-30 will-change-transform ${
-                isDenseOrbit
-                  ? 'w-[14rem] lg:w-[15.5rem]'
-                  : 'w-[15rem] lg:w-[16.75rem]'
+                isLargeOrbit
+                  ? 'w-[12.5rem] xl:w-[13.75rem]'
+                  : isDenseOrbit
+                    ? 'w-[13.5rem] xl:w-[14.75rem]'
+                    : 'w-[15rem] xl:w-[16.5rem]'
               }`}
             >
               <ProjectCard
@@ -380,8 +403,8 @@ export function ProjectsSection() {
           ))}
         </div>
 
-        {/* MOBILE VIEW (< md): Responsive Stack with Click-to-Inspect */}
-        <div className="md:hidden space-y-4">
+        {/* MOBILE & TABLET VIEW (< lg): Clean Grid with Click-to-Inspect */}
+        <div className="lg:hidden space-y-4">
           <div className="flex items-center justify-center gap-3 py-3 px-4 rounded-full bg-[#0b0f0d] border border-[#47f59c]/35 w-fit mx-auto">
             <span className="w-2 h-2 rounded-full bg-[#47f59c] animate-pulse" />
             <span className="font-mono text-xs text-zinc-200">
@@ -390,7 +413,7 @@ export function ProjectsSection() {
             </span>
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
             {filteredProjects.map((project, index) => (
               <ProjectCard
                 key={project.id || project.title}
