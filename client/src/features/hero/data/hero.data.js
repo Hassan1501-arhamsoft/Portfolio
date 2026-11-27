@@ -6,7 +6,7 @@ export const HERO_DATA = {
   name: 'Hassan Maqbool',
   role: 'Full-Stack MERN & AI Integration Engineer',
   summary:
-    'I architect production web applications and retrieval-augmented AI systems—combining React, Node.js, and MongoDB Atlas Vector Search with hybrid RRF retrieval, cross-encoder re-ranking, and real-time WebSockets.',
+    'I build full-stack web apps and grounded RAG pipelines that turn private company data into fast, reliable AI workflows.',
   primaryCta: {
     label: 'Explore Projects',
     href: '#projects',
